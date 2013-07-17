@@ -1,0 +1,6 @@
+src/*
+.settings/*
+.git/*
+.classpath
+.project
+bin/*
