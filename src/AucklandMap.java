@@ -27,6 +27,25 @@ public class AucklandMap {
 				searchField = mapFrame.getSearchTextField();
 				searchButton = mapFrame.getSearchButton();
 				
+				final ActionListener searchButtonListener = new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						textOutput.append(String.format("%s\n", searchField.getText()));
+					}
+				};
+				
+				searchButton.addActionListener(searchButtonListener);
+				
+				searchField.addKeyListener(new KeyListener() {
+					public void keyPressed(KeyEvent e) {
+						if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+							searchButtonListener.actionPerformed(null);
+						}
+					}
+					public void keyReleased(KeyEvent arg0) {}
+					public void keyTyped(KeyEvent arg0) {}
+					
+				});
+				
 				drawingPanel.addMouseListener(new MouseAdapter() {
 		            public void mouseClicked(MouseEvent evt) {
 		            	textOutput.append("Clicked\n");
@@ -36,6 +55,9 @@ public class AucklandMap {
 				drawingPanel.addMouseWheelListener(new MouseWheelListener() {
 		            public void mouseWheelMoved(MouseWheelEvent evt) {
 		                textOutput.append(String.format("Scrolled %s\n", evt.getWheelRotation() > 0 ? "down" : "up"));
+		                squareH -= evt.getWheelRotation();
+		                squareW -= evt.getWheelRotation();
+		                drawingPanel.repaint();
 		            }
 		        });
 				
