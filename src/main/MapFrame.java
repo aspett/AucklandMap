@@ -17,12 +17,15 @@ import javax.swing.*;
 public class MapFrame extends JFrame {
 
 	private AucklandMap owner;
+	private String loadingString;
 
     /**
      * Creates new form Map
      */
     public MapFrame(AucklandMap owner) {
     	this.owner = owner;
+    	loadingString = "";
+    	
         initComponents();
     }
 
@@ -41,7 +44,12 @@ public class MapFrame extends JFrame {
         		owner.drawMap(g);
         	}
         };
-        searchPanel = new JPanel();
+        searchPanel = new JPanel(){
+        	public void paintComponent(Graphics g) {
+        		super.paintComponent(g);
+        		g.drawString(loadingString, 10, 20);
+        	}
+        };
         searchLabel = new JLabel();
         searchButton = new JButton();
         searchTextField = new JTextField();
@@ -133,6 +141,11 @@ public class MapFrame extends JFrame {
         pack();
     }// </editor-fold>
 
+    public void setLoadingMessage(String str) {
+    	loadingString = str;
+    	searchPanel.repaint();
+    }
+    
     public JPanel getDrawingPanel() {
     	return this.drawingPanel;
     }

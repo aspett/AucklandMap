@@ -18,14 +18,12 @@ public class AucklandMap {
 	private DefaultListModel roadList;
 	private JList roadListPanel;
 
-	private int squareX = 50;
-    private int squareY = 50;
-    private int squareW = 35;
-    private int squareH = 20;
+	private int mouseX;
+	private int mouseY;
     private Graph mapGraph;
 
 	public AucklandMap() {
-		mapGraph = new Graph();
+		mapGraph = new Graph(mapFrame);
 
 		SwingUtilities.invokeLater(new Runnable(){
 			public void run(){
@@ -74,28 +72,83 @@ public class AucklandMap {
 
 		drawingPanel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
-            	textOutput.append("Clicked\n");
-            	panelClick(evt);
+            	//panelClick(evt);
             }
         });
 		drawingPanel.addMouseWheelListener(new MouseWheelListener() {
-            public void mouseWheelMoved(MouseWheelEvent evt) {
-                textOutput.append(String.format("Scrolled %s\n", evt.getWheelRotation() > 0 ? "down" : "up"));
-                squareH -= evt.getWheelRotation();
-                squareW -= evt.getWheelRotation();
+            public void mouseWheelMoved(MouseWheelEvent e) {
+            	Location originBefore = mapGraph.getViewingDimensions().getOrigin();
+            	double scaleBefore = mapGraph.getViewingDimensions().getScale();
+            	double zoomBefore = mapGraph.getViewingDimensions().getZoom();
+            	Point centrePoint = new Point(mapFrame.getWidth()/2, mapFrame.getHeight()/2);
+            	Location centreLocBefore = Location.newFromPoint(centrePoint, originBefore, scaleBefore*zoomBefore);
+            	
+            	if(e.getWheelRotation() > 0) mapGraph.zoomOut();
+            	else mapGraph.zoomIn();
+            	
+            	Location originAfter = mapGraph.getViewingDimensions().getOrigin();
+            	double scaleAfter = mapGraph.getViewingDimensions().getScale();
+            	double zoomAfter = mapGraph.getViewingDimensions().getZoom();
+            	Location centreAfter = Location.newFromPoint(centrePoint, originAfter, scaleAfter*zoomAfter);
+            	
+            	double newX = centreLocBefore.x - centreAfter.x;
+            	double newY = centreLocBefore.y - centreAfter.y;
+            	/*newX*=0.33;
+            	newY*=0.33;*/
+            	
+            	Location newOriginOffset = new Location(originBefore.x+((centreAfter.x-centreLocBefore.x)/3),originBefore.y+((centreAfter.y-centreLocBefore.y)/3));
+            	//Location newOriginOffset = new Location(originBefore.x-newX,originBefore.y-newY);
+            	mapGraph.setViewingDimensions(new ViewingDimensions(newOriginOffset, scaleAfter, zoomAfter));
+                    	
+            	/*int x = e.getX();
+                int y = e.getY();
+                ViewingDimensions before,after;
+                before = mapGraph.getViewingDimensions();
+                double scaleBefore = before.getScale();
+                Point oldPoint = new Point(x,y);
+                Location oldLocation = Location.newFromPoint(oldPoint,  mapGraph.getViewingDimensions().getOrigin(), scaleBefore*before.getZoom());
+            	if(e.getWheelRotation() > 0) mapGraph.zoomOut();
+            	else mapGraph.zoomIn();
+            	
+            	after = mapGraph.getViewingDimensions();
+            	double scaleAfter = after.getScale();
+
+            	Point newPoint = oldLocation.getPoint(mapGraph.getViewingDimensions().getOrigin(), scaleAfter);
+            	Point pDiff = new Point(oldPoint.x - newPoint.x, oldPoint.y - newPoint.y);
+            	Location lDiff = Location.newFromPoint(pDiff, mapGraph.getViewingDimensions().getOrigin(), scaleAfter);
+            	System.out.printf("%f, %f\n", lDiff.x, lDiff.y);
+            	Location oldOrigin = mapGraph.getViewingDimensions().getOrigin();
+            	Location newOrigin = new Location(oldOrigin.x - lDiff.x, oldOrigin.y - lDiff.y);
+            	
+            	mapGraph.setViewingDimensions(new ViewingDimensions(newOrigin, scaleAfter, after.getZoom()));
+            	
+            	System.out.printf("Point before: %s, Point after: %s\n", oldPoint, newPoint);*/
+            	
                 drawingPanel.repaint();
+            	
             }
         });
+		
 
 		drawingPanel.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                moveSquare(e.getX(),e.getY());
+            	mouseX = e.getX();
+            	mouseY = e.getY();
+            	//System.out.printf("Started @ (%d, %d)\n", mouseX, mouseY);
             }
         });
 
 		drawingPanel.addMouseMotionListener(new MouseAdapter() {
             public void mouseDragged(MouseEvent e) {
-                moveSquare(e.getX(),e.getY());
+                int x = e.getX() - mouseX;
+                int y = e.getY() - mouseY;
+                ViewingDimensions d = mapGraph.getViewingDimensions();
+                Location newOrigin = Location.newFromPoint(new Point(x,y), d.getOrigin(), d.getScale());
+                
+                mapGraph.setViewingDimensions(new ViewingDimensions(newOrigin, d.getScale(), d.getZoom()));
+                mouseX = e.getX();
+                mouseY = e.getY();
+                drawingPanel.repaint();
             }
         });
 
@@ -107,8 +160,9 @@ public class AucklandMap {
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				while(fc.getSelectedFile() == null)
 					fc.showDialog(mapFrame, "Open");
-				mapGraph = new Graph();
+				mapGraph = new Graph(mapFrame);
 				mapGraph.loadStructures(fc.getSelectedFile().getAbsolutePath());
+				drawingPanel.repaint();
 
 			}
 		};
@@ -137,16 +191,5 @@ public class AucklandMap {
 			textOutput.append("Clicked again\n");
 		}
 	}
-	private void moveSquare(int x, int y) {
-        int OFFSET = 1;
-        if ((squareX!=x) || (squareY!=y)) {
-            //drawingPanel.repaint(squareX,squareY,squareW+OFFSET,squareH+OFFSET);
-        	drawingPanel.repaint();
-            squareX=x;
-            squareY=y;
-            drawingPanel.repaint();
-            //drawingPanel.repaint(squareX,squareY,squareW+OFFSET,squareH+OFFSET);
-        }
-    }
 
 }

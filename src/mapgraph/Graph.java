@@ -5,15 +5,29 @@ import java.awt.geom.Path2D;
 import java.io.*;
 import java.util.*;
 
+import javax.swing.JFrame;
+
 import main.Location;
+import main.MapFrame;
+import main.ViewingDimensions;
 import indexstructures.*;
 
 public class Graph {
 	private Map<Integer, IntersectionNode> nodes;
 	private Set<RoadSegment> edges;
 	private Map<Integer, Road> roads;
-	public RoadTrie roadTrie = new RoadTrie();
+	private MapFrame frame;
 	private double maxX, maxY, minX, minY;
+	
+	private double zoom = 1.0;
+	private double panX = 0;
+	private double panY = 0;
+	double scale;
+	Location origin;
+	
+	public RoadTrie roadTrie = new RoadTrie();
+	
+	
 
 
 	private static final String directory = "/u/students/pettandr/COMP261/Assignments/AucklandMap/small-data";
@@ -27,31 +41,36 @@ public class Graph {
 		minX = 0;
 		minY = 0;
 	}
+	public Graph(MapFrame frame) {
+		this();
+		this.frame = frame;
+	}
 
 	public void draw(Graphics g, Dimension dimensions) {
-		double scale = dimensions.getWidth()/(maxX-minX);
-		Location origin = new Location(minX, maxY);
+		scale = (dimensions.getWidth()/(maxX-minX))*this.zoom;
+		origin = new Location(minX-panX, maxY-panY);
 
 		Graphics2D g2d = (Graphics2D) g;
-		Path2D.Double path = new Path2D.Double();
-
+		g.setColor(new Color(255,0,0));
+		g.drawString(String.format("Scale: %f panX: %f panY:%f", scale,panX,panY), (int) (dimensions.getWidth()-300), 50);
+		g.setColor(Color.BLACK);
+		
+		
 		for(RoadSegment s : edges) {
-			boolean first = true;
-			for(Location l : s.getCoords()) {
-				if(first) {
-					first = false;
-					//path.moveTo()
-					//TODO use .getPoint on Location
-				}
-			}
+			s.draw(g2d, origin, scale);
 		}
+		
+		for(IntersectionNode n : nodes.values()) {
+			n.draw(g2d, origin, scale);
+		}
+		
 	}
 
 	public void loadStructures(String directory) {
 		this.loadRoads(directory);
 		this.loadSegments(directory);
 
-
+		
 
 		this.buildRanges();
 	}
@@ -73,7 +92,7 @@ public class Graph {
 		try {
 			Scanner scanIn = new Scanner(roadFile);
 			boolean firstLine = true;
-			System.out.println("Loading roads..");
+			this.outputMessage("Loading roads..");
 			while(scanIn.hasNextLine()) {
 				if(firstLine) { firstLine = false; scanIn.nextLine(); continue; }
 				String[] lineArray = scanIn.nextLine().split("\t");
@@ -86,7 +105,7 @@ public class Graph {
 					continue;
 				}
 			}
-			System.out.println("Completed loading roads.");
+			this.outputMessage("Completed loading roads.");
 		} catch (FileNotFoundException e) {
 
 		}
@@ -98,7 +117,7 @@ public class Graph {
 		try {
 			Scanner scanIn = new Scanner(file);
 			boolean firstLine = true;
-			System.out.println("Loading road segments");
+			this.outputMessage("Loading road segments");
 			while(scanIn.hasNextLine()) {
 				if(firstLine) { firstLine = false; scanIn.nextLine(); continue; }
 				String[] lineArray = scanIn.nextLine().split("\t");
@@ -111,9 +130,30 @@ public class Graph {
 
 				}
 			}
-			System.out.println("Completed loading road segments");
+			this.outputMessage("Completed loading road segments");
 		} catch(FileNotFoundException e) {
 
 		}
+	}
+	
+	public void zoomIn() {
+		this.zoom *= 1.10;
+	}
+	public void zoomOut() {
+		this.zoom /= 1.10;
+	}
+	public ViewingDimensions getViewingDimensions() {
+		return new ViewingDimensions(new Location(this.panX, this.panY), this.scale, this.zoom);
+	}
+	public void setViewingDimensions(ViewingDimensions o) {
+		this.zoom = o.getZoom();
+		this.scale = o.getScale();
+		this.panX = o.getOrigin().x;
+		this.panY = o.getOrigin().y;
+	}
+	
+	private void outputMessage(String str) {
+		if(frame != null) frame.setLoadingMessage(str);
+		else System.out.println(str);
 	}
 }

@@ -1,8 +1,10 @@
 package mapgraph;
+import java.awt.Graphics2D;
+import java.awt.geom.Path2D;
 import java.util.*;
 import main.*;
 
-public class RoadSegment {
+public class RoadSegment implements MapDrawable {
 	private Integer roadID;
 	private double length;
 	private IntersectionNode nodeFrom;
@@ -22,6 +24,26 @@ public class RoadSegment {
 			Double lon = Double.parseDouble(line[i+1]);
 			coords.add(Location.newFromLatLon(lat, lon));
 		}
+	}
+	
+	public void draw(Graphics2D g2d, Location origin, double scale) {
+		Path2D path = new Path2D.Double();
+		//System.out.printf("%d / %d\n", i++, edges.size());
+		boolean first = true;
+		for(Location l : getCoords()) {
+			double x = l.getPoint(origin, scale).x;
+			double y = l.getPoint(origin, scale).y;
+			if(first) {
+				first = false;
+				path.moveTo(x, y);
+				//path.moveTo()
+				//TODO use .getPoint on Location
+			}
+			else {
+				path.lineTo(x, y);
+			}
+		}
+		g2d.draw(path);
 	}
 
 	@Override
