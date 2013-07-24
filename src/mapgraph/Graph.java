@@ -1,7 +1,11 @@
 package mapgraph;
 
+import java.awt.*;
+import java.awt.geom.Path2D;
 import java.io.*;
 import java.util.*;
+
+import main.Location;
 import indexstructures.*;
 
 public class Graph {
@@ -9,6 +13,7 @@ public class Graph {
 	private Set<RoadSegment> edges;
 	private Map<Integer, Road> roads;
 	public RoadTrie roadTrie = new RoadTrie();
+	private double maxX, maxY, minX, minY;
 
 
 	private static final String directory = "/u/students/pettandr/COMP261/Assignments/AucklandMap/small-data";
@@ -17,11 +22,49 @@ public class Graph {
 		nodes = new HashMap<Integer, IntersectionNode>();
 		edges = new HashSet<RoadSegment>();
 		roads = new HashMap<Integer, Road>();
+		maxX = 0;
+		maxY = 0;
+		minX = 0;
+		minY = 0;
+	}
+
+	public void draw(Graphics g, Dimension dimensions) {
+		double scale = dimensions.getWidth()/(maxX-minX);
+		Location origin = new Location(minX, maxY);
+
+		Graphics2D g2d = (Graphics2D) g;
+		Path2D.Double path = new Path2D.Double();
+
+		for(RoadSegment s : edges) {
+			boolean first = true;
+			for(Location l : s.getCoords()) {
+				if(first) {
+					first = false;
+					//path.moveTo()
+					//TODO use .getPoint on Location
+				}
+			}
+		}
 	}
 
 	public void loadStructures(String directory) {
 		this.loadRoads(directory);
 		this.loadSegments(directory);
+
+
+
+		this.buildRanges();
+	}
+
+	public void buildRanges() {
+		for(RoadSegment s : edges) {
+			for(Location l : s.getCoords()) {
+				if(l.x > maxX) maxX = l.x;
+				if(l.x < minX) minX = l.x;
+				if(l.y > maxY) maxY = l.y;
+				if(l.y < minY) minY = l.y;
+			}
+		}
 	}
 
 	public void loadRoads(String directory) {

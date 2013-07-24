@@ -123,11 +123,12 @@ public class AucklandMap {
 
 
 	public void drawMap(Graphics g) {
-        g.drawString("This is my custom Panel!",10,20);
+        /*g.drawString("This is my custom Panel!",10,20);
         g.setColor(Color.RED);
         g.fillRect(squareX,squareY,squareW,squareH);
         g.setColor(Color.BLACK);
-        g.drawRect(squareX,squareY,squareW,squareH);
+        g.drawRect(squareX,squareY,squareW,squareH);*/
+		mapGraph.draw(g, new Dimension(drawingPanel.getWidth(), drawingPanel.getHeight()));
 	}
 
 	public void panelClick(MouseEvent e) {

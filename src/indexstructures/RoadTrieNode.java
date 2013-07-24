@@ -7,8 +7,8 @@ public class RoadTrieNode extends RoadTrie {
 
 
 	public RoadTrieNode(char letter, Road value, Set<RoadTrieNode> children) {
-		if((letter > 90 || letter < 48) && letter != 32) throw new RuntimeException();
-		assert (letter >= 48 && letter < 91) || letter == 32; //Ensure that the letter is either a space or alpha numerical.
+		//if((letter > 90 || letter < 48) && letter != 32) throw new RuntimeException();
+		//assert (letter >= 48 && letter < 91) || letter == 32; //Ensure that the letter is either a space or alpha numerical.
 		this.letter = letter;
 		this.value = value;
 		if(children != null) this.children = new HashSet<RoadTrieNode>(children); //Ensure we're dealing with a hash set. Probably faster.
