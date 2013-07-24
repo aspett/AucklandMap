@@ -29,20 +29,17 @@ public class RoadTrie {
 
 	protected void collectNodes(TreeSet<String> nodes, StringBuilder prefix) {
 
-		prefix.append(letter);
-		//System.out.printf("Prefix: %s\n", prefix);
+		prefix = new StringBuilder(prefix).append(letter);
 		if(this.value != null) nodes.add(prefix.toString());
 		for(RoadTrieNode child : children) {
-			//System.out.printf("Child: %c\n", child.letter);
 			child.collectNodes(nodes, prefix);
 		}
 	}
 
 	public RoadTrie getNode(String prefix) {
-		//RoadTrie letterNode
+		if(prefix.length() == 0) return null;
 		RoadTrie letterNode = getLetterNode(prefix.charAt(0));
 		if(letterNode == null) return null;
-		//TODO
 		return letterNode.getNodeRec(prefix, 0);
 	}
 
