@@ -48,6 +48,9 @@ public class MapFrame extends JFrame {
         outputTextArea = new JTextArea();
         menuBar = new JMenuBar();
 
+        roadList = new DefaultListModel();
+        roadListPanel = new JList(roadList);
+
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setBackground(new Color(255, 255, 153));
         setResizable(false);
@@ -105,10 +108,12 @@ public class MapFrame extends JFrame {
 
         jScrollPane1.setAutoscrolls(true);
 
-        outputTextArea.setEditable(false);
+        /*outputTextArea.setEditable(false);
         outputTextArea.setColumns(20);
-        outputTextArea.setRows(5);
-        jScrollPane1.setViewportView(outputTextArea);
+        outputTextArea.setRows(5);*/
+        roadListPanel.setVisibleRowCount(5);
+        jScrollPane1.setViewportView(roadListPanel);
+
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -142,6 +147,12 @@ public class MapFrame extends JFrame {
     public JMenuItem getOpenMenu() {
     	return this.openMenuItem;
     }
+    public DefaultListModel getRoadList() {
+    	return this.roadList;
+    }
+    public JList getRoadListPanel() {
+    	return this.roadListPanel;
+    }
 
     // Variables declaration - do not modify
     private JPanel drawingPanel;
@@ -155,5 +166,7 @@ public class MapFrame extends JFrame {
     private JTextField searchTextField;
     private JMenuBar menuBar;
     private JMenuItem openMenuItem;
+    private JList roadListPanel;
+    private DefaultListModel roadList;
     // End of variables declaration
 }

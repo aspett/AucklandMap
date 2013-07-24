@@ -3,6 +3,7 @@ import java.awt.event.*;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.DefaultListModel;
 import mapgraph.*;
 
 
@@ -13,6 +14,8 @@ public class AucklandMap {
 	private JTextField searchField;
 	private JButton searchButton;
 	private JMenuItem openMenuItem;
+	private DefaultListModel roadList;
+	private JList roadListPanel;
 
 	private int squareX = 50;
     private int squareY = 50;
@@ -44,23 +47,25 @@ public class AucklandMap {
 		searchField = mapFrame.getSearchTextField();
 		searchButton = mapFrame.getSearchButton();
 		openMenuItem = mapFrame.getOpenMenu();
+		roadList = mapFrame.getRoadList();
+		roadListPanel = mapFrame.getRoadListPanel();
+
 
 		final ActionListener searchButtonListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				textOutput.append(String.format("%s\n", searchField.getText()));
+				roadList.clear();
+				for(String road : mapGraph.roadTrie.matchRoads(searchField.getText())) {
+					roadList.addElement(String.format("%s\n",road));
+				}
 			}
 		};
 
 		searchButton.addActionListener(searchButtonListener);
 
 		searchField.addKeyListener(new KeyListener() {
-			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() == KeyEvent.VK_ENTER) {
-					searchButtonListener.actionPerformed(null);
-				}
-			}
-			public void keyReleased(KeyEvent arg0) {}
-			public void keyTyped(KeyEvent arg0) {}
+			public void keyPressed(KeyEvent e) {searchButtonListener.actionPerformed(null);}
+			public void keyReleased(KeyEvent arg0) {searchButtonListener.actionPerformed(null);}
+			public void keyTyped(KeyEvent arg0) {searchButtonListener.actionPerformed(null);}
 
 		});
 
@@ -91,6 +96,8 @@ public class AucklandMap {
             }
         });
 
+
+
 		ActionListener openMenuListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
@@ -104,18 +111,12 @@ public class AucklandMap {
 		openMenuItem.addActionListener(openMenuListener);
 		openMenuListener.actionPerformed(null);
 
-		testTrie();
+		//TODO do something now.
 
 
 	}
 
-	private void testTrie() {
-		// TODO Auto-generated method stub
-		TreeSet<String> roads = mapGraph.roadTrie.matchRoads("");
-		for(String road : roads) {
-			System.out.println(road);
-		}
-	}
+
 
 	public void drawMap(Graphics g) {
         g.drawString("This is my custom Panel!",10,20);
