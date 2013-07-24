@@ -143,13 +143,13 @@ public class Graph {
 		this.zoom /= 1.10;
 	}
 	public ViewingDimensions getViewingDimensions() {
-		return new ViewingDimensions(new Location(this.panX, this.panY), this.scale, this.zoom);
+		return new ViewingDimensions(origin, new Location(this.panX, this.panY), this.scale, this.zoom);
 	}
 	public void setViewingDimensions(ViewingDimensions o) {
 		this.zoom = o.getZoom();
 		this.scale = o.getScale();
-		this.panX = o.getOrigin().x;
-		this.panY = o.getOrigin().y;
+		this.panX = o.getPan().x;
+		this.panY = o.getPan().y;
 	}
 	
 	private void outputMessage(String str) {
