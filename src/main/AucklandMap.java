@@ -1,3 +1,4 @@
+package main;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -27,7 +28,9 @@ public class AucklandMap {
 		mapGraph = new Graph();
 
 		SwingUtilities.invokeLater(new Runnable(){
-			public void run(){init();}
+			public void run(){
+				init();
+			}
 		});
 
 	}
@@ -104,6 +107,7 @@ public class AucklandMap {
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				while(fc.getSelectedFile() == null)
 					fc.showDialog(mapFrame, "Open");
+				mapGraph = new Graph();
 				mapGraph.loadStructures(fc.getSelectedFile().getAbsolutePath());
 
 			}
