@@ -21,22 +21,19 @@ public class Graph {
 
 	public void loadStructures(String directory) {
 		this.loadRoads(directory);
+		this.loadSegments(directory);
 	}
 
 	public void loadRoads(String directory) {
-		//DEBUG System.out.println(directory);
-		String roadFilename = String.format("%s/roadID-roadInfo.tab", this.directory);
+		String roadFilename = String.format("%s/roadID-roadInfo.tab", directory);
 		File roadFile = new File(roadFilename);
 		try {
 			Scanner scanIn = new Scanner(roadFile);
 			boolean firstLine = true;
 			System.out.println("Loading roads..");
 			while(scanIn.hasNextLine()) {
-
-				//if(firstLine) { firstLine = false; scanIn.nextLine(); continue; }
-				//String lineArray = scanIn.nextLine();
+				if(firstLine) { firstLine = false; scanIn.nextLine(); continue; }
 				String[] lineArray = scanIn.nextLine().split("\t");
-
 				try {
 					Road road = new Road(lineArray);
 					roads.put(road.getId(), road);
@@ -45,17 +42,35 @@ public class Graph {
 				} catch(NumberFormatException e) {
 					continue;
 				}
-
-
-
-				/*DEBUGfor(Map.Entry<Integer, Road> e : roads.entrySet()) {
-					System.out.printf("%s\n", e.getValue().getName());
-				}*/
 			}
 			System.out.println("Completed loading roads.");
 		} catch (FileNotFoundException e) {
 
 		}
+	}
 
+	public void loadSegments(String directory) {
+		String filename = String.format("%s/roadSeg-roadID-length-nodeID-nodeID-coords.tab", directory);
+		File file = new File(filename);
+		try {
+			Scanner scanIn = new Scanner(file);
+			boolean firstLine = true;
+			System.out.println("Loading road segments");
+			while(scanIn.hasNextLine()) {
+				if(firstLine) { firstLine = false; scanIn.nextLine(); continue; }
+				String[] lineArray = scanIn.nextLine().split("\t");
+				try {
+					RoadSegment seg = new RoadSegment(lineArray);
+					edges.add(seg);
+					Road roadOfSegment = roads.get(seg.getRoadID());
+					roadOfSegment.addSegment(seg);
+				}catch(NumberFormatException e) {
+
+				}
+			}
+			System.out.println("Completed loading road segments");
+		} catch(FileNotFoundException e) {
+
+		}
 	}
 }

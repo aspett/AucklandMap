@@ -1,6 +1,8 @@
 package mapgraph;
+import java.util.*;
 
 public class Road {
+
 	private final Integer id;
 	private final Integer type;
 	private final String name;
@@ -11,6 +13,7 @@ public class Road {
 	private final Integer notforcar;
 	private final Integer notforpede;
 	private final Integer notforbicy;
+	private List<RoadSegment> segments;
 
 
 
@@ -26,6 +29,7 @@ public class Road {
 		notforcar = Integer.parseInt(line[7]);
 		notforpede = Integer.parseInt(line[8]);
 		notforbicy = Integer.parseInt(line[9]);
+		segments = new ArrayList<RoadSegment>();
 	}
 
 	public String toString() {
@@ -70,5 +74,13 @@ public class Road {
 
 	public Integer getNotforbicy() {
 		return notforbicy;
+	}
+
+	public void addSegment(RoadSegment seg) {
+		segments.add(seg);
+	}
+
+	public List<RoadSegment> getSegments() {
+		return Collections.unmodifiableList(segments);
 	}
 }

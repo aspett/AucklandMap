@@ -70,9 +70,9 @@ public class Location{
     private static final double scaleLat = 111.0;    // how many kilometers per degree.
     private static final double degToRad = Math.PI/180;
     public static Location newFromLatLon(double lat, double lon){
-	double y = (lat - centerLat) *scaleLat;
-	double x = (lon - centerLon) * (scaleLat * Math.cos((lat-centerLat)*degToRad));
-	return new Location(x, y);
+		double y = (lat - centerLat) *scaleLat;
+		double x = (lon - centerLon) * (scaleLat * Math.cos((lat-centerLat)*degToRad));
+		return new Location(x, y);
     }
 
     // ---------   UTILITY methods on Locations ------------------------
