@@ -47,11 +47,13 @@ public class QuadTree {
 	}
 
 	public IntersectionNode find(Location loc) {
+		System.out.printf("Searching bounds [x=%f,y=%f,w=%f,h=%f]\n", bounds.x, bounds.y, bounds.width, bounds.height);
 		Point2D point = new Point2D.Double(loc.x, loc.y);
 		if(!bounds.contains(point))
 			return null;
 
 		if(northWest != null) { //Search the children..
+			System.out.println("Searching children..");
 			if(northWest.getBounds().contains(point)) return northWest.find(loc);
 			if(northEast.getBounds().contains(point)) return northEast.find(loc);
 			if(southWest.getBounds().contains(point)) return southWest.find(loc);
