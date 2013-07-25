@@ -16,6 +16,7 @@ public class IntersectionNode implements MapDrawable {
 	private Set<RoadSegment> edgesIn;
 	private Location location;
 	private Integer id;
+	private static IntersectionNode selectedNode;
 
 	public IntersectionNode(String[] line) throws NumberFormatException {
 		id = Integer.parseInt(line[0]);
@@ -25,8 +26,14 @@ public class IntersectionNode implements MapDrawable {
 
 	public void draw(Graphics2D g, Location origin, double scale) {
 		Point d = location.getPoint(origin, scale);
-		g.setColor(Color.BLUE);
-		g.drawOval(d.x, d.y, 1, 1);
+		if(this == selectedNode) {
+			g.setColor(Color.RED);
+			g.fillOval(d.x-3, d.y-3, 6, 6);
+		}
+		else {
+			g.setColor(Color.BLUE);
+			g.fillOval(d.x-2, d.y-2, 4, 4);
+		}
 		g.setColor(Color.BLACK);
 
 	}
@@ -41,5 +48,9 @@ public class IntersectionNode implements MapDrawable {
 
 	public String toString() {
 		return String.format("[%d, (%f, %f)]", id, location.x, location.y);
+	}
+	
+	public static void setSelectedNode(IntersectionNode n) {
+		IntersectionNode.selectedNode = n;
 	}
 }

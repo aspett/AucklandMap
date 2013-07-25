@@ -82,9 +82,13 @@ public class AucklandMap {
             	Point p = new Point(evt.getX(),evt.getY());
             	Location loc = Location.newFromPoint(p, vd.getOrigin(), vd.getScale());
             	IntersectionNode closest = mapGraph.intersectionQuad.find(loc);
+            	HashSet<IntersectionNode> all = mapGraph.intersectionQuad.findall(loc);
             	System.out.printf("Clicked at point %s\n" +
             			" = Location %s\n" +
-            			" = Node %s\n\n", p, loc, closest == null ? "null" : closest.toString());
+            			" = Node %s\n" +
+            			" = Nodes: %s\n\n", p, loc, closest == null ? "null" : closest.toString(), all);
+            	IntersectionNode.setSelectedNode(closest);
+            	drawingPanel.repaint();
             }
         });
 		drawingPanel.addMouseWheelListener(new MouseWheelListener() {
@@ -110,7 +114,7 @@ public class AucklandMap {
             	Point centreScreen = new Point(drawingPanel.getWidth()/2, drawingPanel.getHeight()/2);
             	Location centreScreenLoc = Location.newFromPoint(centreScreen, bOrigin, bScale);
 
-            	System.out.printf("Screen centre: %s | Map centre: %s\n", centreScreenLoc, centre);
+            	//System.out.printf("Screen centre: %s | Map centre: %s\n", centreScreenLoc, centre);
 
             	Location oldPan = vd.getPan();
             	Location newPan = new Location(oldPan.x + (centreScreenLoc.x-centre.x), oldPan.y + (centreScreenLoc.y-centre.y));
@@ -136,7 +140,7 @@ public class AucklandMap {
 			public void mouseMoved(MouseEvent e) {
 				mouseX2 = e.getX();
 				mouseY2 = e.getY();
-				drawingPanel.repaint();
+				drawingPanel.repaint(drawingPanel.getWidth()-300, 100, drawingPanel.getWidth(), 130);
 			}
             public void mouseDragged(MouseEvent e) {
                 int x = e.getX() - mouseX;

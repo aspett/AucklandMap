@@ -12,6 +12,7 @@ import main.Location;
 import main.MapFrame;
 import main.ViewingDimensions;
 import indexstructures.*;
+import indexstructures.quadtree.MapBoundingBox;
 import indexstructures.quadtree.QuadTree;
 
 public class Graph {
@@ -60,13 +61,17 @@ public class Graph {
 		/*g.setColor(new Color(255,0,0));
 		g.drawString(String.format("Scale: %f panX: %f panY:%f", scale,panX,panY), (int) (dimensions.getWidth()-300), 50);
 		g.setColor(Color.BLACK);*/
-
+		
+		if(intersectionQuad != null) intersectionQuad.draw(g2d, origin, scale);
+		
 		for(IntersectionNode n : nodes.values()) {
 			n.draw(g2d, origin, scale);
 		}
 		for(RoadSegment s : edges) {
 			s.draw(g2d, origin, scale);
 		}
+		
+		
 
 
 
@@ -102,7 +107,7 @@ public class Graph {
 
 	public void buildQuadTree() {
 		System.out.println("Building Quad Tree....");
-		intersectionQuad = new QuadTree(new Rectangle2D.Double(minX, minY, maxX-minX, maxY-minY));
+		intersectionQuad = new QuadTree(new MapBoundingBox(minX, maxY, maxX-minX, minY-maxY));
 		for(IntersectionNode n : nodes.values()) {
 			intersectionQuad.add(n);
 		}
