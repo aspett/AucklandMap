@@ -4,7 +4,11 @@ import java.awt.event.*;
 import java.util.*;
 
 import javax.swing.*;
-import javax.swing.DefaultListModel;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import mapgraph.*;
 
 
@@ -81,13 +85,13 @@ public class AucklandMap {
             public void mouseWheelMoved(MouseWheelEvent e) {
             	ViewingDimensions vd = mapGraph.getViewingDimensions();
             	Location bOrigin = vd.getOrigin();
-            	
+
             	double bScale = vd.getScale();
             	double bZoom = vd.getZoom();
-            	
+
             	Location centre = Location.newFromPoint(new Point(drawingPanel.getWidth()/2, drawingPanel.getHeight()/2), bOrigin, bScale);
             	Point centrePoint = centre.getPoint(bOrigin, bScale);
-            	
+
             	if(e.getWheelRotation() < 0) {
             		vd.setZoom(vd.getZoom()*1.10);
             		bScale *= 1.10;
@@ -96,102 +100,23 @@ public class AucklandMap {
             		vd.setZoom(vd.getZoom()*0.90);
             		bScale *= 0.90;
             	}
-            	
+
             	Point centreScreen = new Point(drawingPanel.getWidth()/2, drawingPanel.getHeight()/2);
             	Location centreScreenLoc = Location.newFromPoint(centreScreen, bOrigin, bScale);
-            	
+
             	System.out.printf("Screen centre: %s | Map centre: %s\n", centreScreenLoc, centre);
-            	
+
             	Location oldPan = vd.getPan();
             	Location newPan = new Location(oldPan.x + (centreScreenLoc.x-centre.x), oldPan.y + (centreScreenLoc.y-centre.y));
             	vd.setPan(newPan);
-            	
-            	mapGraph.setViewingDimensions(vd);
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	/*Location originBefore = mapGraph.getViewingDimensions().getOrigin();
-            	double scaleBefore = mapGraph.getViewingDimensions().getScale();
-            	double zoomBefore = mapGraph.getViewingDimensions().getZoom();
-            	Point centrePoint = new Point(mapFrame.getWidth()/2, mapFrame.getHeight()/2);
-            	Location centreLocBefore = Location.newFromPoint(centrePoint, originBefore, scaleBefore*zoomBefore);
-            	
-            	if(e.getWheelRotation() > 0) mapGraph.zoomOut();
-            	else mapGraph.zoomIn();
-            	
-            	Location originAfter = mapGraph.getViewingDimensions().getOrigin();
-            	double scaleAfter = mapGraph.getViewingDimensions().getScale();
-            	double zoomAfter = mapGraph.getViewingDimensions().getZoom();
-            	Location centreAfter = Location.newFromPoint(centrePoint, originAfter, scaleAfter*zoomAfter);
-            	
-            	double newX = centreLocBefore.x - centreAfter.x;
-            	double newY = centreLocBefore.y - centreAfter.y;
-            	/*newX*=0.33;
-            	newY*=0.33;
-            	
-            	Location newOriginOffset = new Location(originBefore.x+((centreAfter.x-centreLocBefore.x)/3),originBefore.y+((centreAfter.y-centreLocBefore.y)/3));
-            	//Location newOriginOffset = new Location(originBefore.x-newX,originBefore.y-newY);
-            	mapGraph.setViewingDimensions(new ViewingDimensions(newOriginOffset, scaleAfter, zoomAfter));
-            	
-            	*/
-            	
-            	
-            	
-            	
-            	////////////////////////////////////////////
-                    	
-            	/*int x = e.getX();
-                int y = e.getY();
-                ViewingDimensions before,after;
-                before = mapGraph.getViewingDimensions();
-                double scaleBefore = before.getScale();
-                Point oldPoint = new Point(x,y);
-                Location oldLocation = Location.newFromPoint(oldPoint,  mapGraph.getViewingDimensions().getOrigin(), scaleBefore*before.getZoom());
-            	if(e.getWheelRotation() > 0) mapGraph.zoomOut();
-            	else mapGraph.zoomIn();
-            	
-            	after = mapGraph.getViewingDimensions();
-            	double scaleAfter = after.getScale();
 
-            	Point newPoint = oldLocation.getPoint(mapGraph.getViewingDimensions().getOrigin(), scaleAfter);
-            	Point pDiff = new Point(oldPoint.x - newPoint.x, oldPoint.y - newPoint.y);
-            	Location lDiff = Location.newFromPoint(pDiff, mapGraph.getViewingDimensions().getOrigin(), scaleAfter);
-            	System.out.printf("%f, %f\n", lDiff.x, lDiff.y);
-            	Location oldOrigin = mapGraph.getViewingDimensions().getOrigin();
-            	Location newOrigin = new Location(oldOrigin.x - lDiff.x, oldOrigin.y - lDiff.y);
-            	
-            	mapGraph.setViewingDimensions(new ViewingDimensions(newOrigin, scaleAfter, after.getZoom()));
-            	
-            	System.out.printf("Point before: %s, Point after: %s\n", oldPoint, newPoint);*/
-            	
+            	mapGraph.setViewingDimensions(vd);
+
                 drawingPanel.repaint();
-            	
+
             }
         });
-		
+
 
 		drawingPanel.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
@@ -205,14 +130,14 @@ public class AucklandMap {
 			public void mouseMoved(MouseEvent e) {
 				mouseX2 = e.getX();
 				mouseY2 = e.getY();
-				drawingPanel.repaint();
+				//drawingPanel.repaint();
 			}
             public void mouseDragged(MouseEvent e) {
                 int x = e.getX() - mouseX;
                 int y = e.getY() - mouseY;
                 ViewingDimensions d = mapGraph.getViewingDimensions();
                 Location newPan = Location.newFromPoint(new Point(x,y), d.getPan(), d.getScale());
-                
+
                 mapGraph.setViewingDimensions(new ViewingDimensions(d.getOrigin(), newPan, d.getScale(), d.getZoom()));
                 mouseX = e.getX();
                 mouseY = e.getY();
@@ -220,6 +145,19 @@ public class AucklandMap {
             }
         });
 
+		roadListPanel.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+
+				String selectedValue = (String)roadListPanel.getSelectedValue();
+				if(selectedValue != null) {
+					selectedValue = selectedValue.trim();
+					Road r = mapGraph.roadTrie.getRoad(selectedValue);
+					r.setSelected(true);
+					drawingPanel.repaint();
+				}
+			}
+
+		});
 
 
 		ActionListener openMenuListener = new ActionListener() {
@@ -251,9 +189,11 @@ public class AucklandMap {
         g.setColor(Color.BLACK);
         g.drawRect(squareX,squareY,squareW,squareH);*/
 		mapGraph.draw(g, new Dimension(drawingPanel.getWidth(), drawingPanel.getHeight()));
-		ViewingDimensions vd = mapGraph.getViewingDimensions();
-		g.drawString(String.format("%s", Location.newFromPoint(new Point(mouseX2,mouseY2), vd.getOrigin(), vd.getScale())), 
-				(int) (new Dimension(drawingPanel.getWidth(), drawingPanel.getHeight()).getWidth()-300), 100);
+
+		//DEBUG
+		/*ViewingDimensions vd = mapGraph.getViewingDimensions();
+		g.drawString(String.format("%s", Location.newFromPoint(new Point(mouseX2,mouseY2), vd.getOrigin(), vd.getScale())),
+				(int) (new Dimension(drawingPanel.getWidth(), drawingPanel.getHeight()).getWidth()-300), 100);*/
 	}
 
 	public void panelClick(MouseEvent e) {

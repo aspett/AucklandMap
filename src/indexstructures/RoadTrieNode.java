@@ -34,7 +34,7 @@ public class RoadTrieNode extends RoadTrie {
 	}*/
 
 	public String toString() {
-		return String.format("\n{%c, %s, %s}", letter, value, children);
+		return String.format("{%c, %s, %s}", letter, value, children);
 	}
 
 

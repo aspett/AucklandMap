@@ -13,7 +13,7 @@ public class RoadTrie {
 		children = new HashSet<RoadTrieNode>();
 	}
 
-	public Road hasRoad(String roadName) {
+	public Road getRoad(String roadName) {
 		RoadTrie node = getNode(roadName);
 		if(node != null) return node.value;
 		else return null;
@@ -93,6 +93,7 @@ public class RoadTrie {
 		}
 		return null;
 	}
+
 
 	@Override
 	public String toString() {

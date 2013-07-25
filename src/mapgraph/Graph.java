@@ -18,16 +18,16 @@ public class Graph {
 	private Map<Integer, Road> roads;
 	private MapFrame frame;
 	private double maxX, maxY, minX, minY;
-	
+
 	private double zoom = 1.0;
 	private double panX = 0;
 	private double panY = 0;
 	double scale;
 	Location origin;
-	
+
 	public RoadTrie roadTrie = new RoadTrie();
-	
-	
+
+
 
 
 	private static final String directory = "/u/students/pettandr/COMP261/Assignments/AucklandMap/small-data";
@@ -51,26 +51,28 @@ public class Graph {
 		origin = new Location(minX-panX, maxY-panY);
 
 		Graphics2D g2d = (Graphics2D) g;
-		g.setColor(new Color(255,0,0));
+
+		//DEBUG
+		/*g.setColor(new Color(255,0,0));
 		g.drawString(String.format("Scale: %f panX: %f panY:%f", scale,panX,panY), (int) (dimensions.getWidth()-300), 50);
-		g.setColor(Color.BLACK);
-		
-		
-		for(RoadSegment s : edges) {
-			s.draw(g2d, origin, scale);
-		}
-		
+		g.setColor(Color.BLACK);*/
+
 		for(IntersectionNode n : nodes.values()) {
 			n.draw(g2d, origin, scale);
 		}
-		
+		for(RoadSegment s : edges) {
+			s.draw(g2d, origin, scale);
+		}
+
+
+
 	}
 
 	public void loadStructures(String directory) {
 		this.loadRoads(directory);
+		this.loadIntersections(directory);
 		this.loadSegments(directory);
 
-		
 
 		this.buildRanges();
 	}
@@ -111,6 +113,29 @@ public class Graph {
 		}
 	}
 
+	public void loadIntersections(String directory) {
+		String filename = String.format("%s/nodeID-lat-lon.tab", directory);
+		File file = new File(filename);
+		try {
+			Scanner scanIn = new Scanner(file);
+			boolean firstLine = true;
+			this.outputMessage("Loading intersections");
+			while(scanIn.hasNextLine()) {
+				if(firstLine) { firstLine = false; scanIn.nextLine(); continue; }
+				String[] lineArray = scanIn.nextLine().split("\t");
+				try {
+					IntersectionNode node = new IntersectionNode(lineArray);
+					nodes.put(node.getID(), node);
+				}catch(NumberFormatException e) {
+
+				}
+			}
+			this.outputMessage("Completed loading road segments");
+		} catch(FileNotFoundException e) {
+			throw new RuntimeException(e.getMessage());
+		}
+	}
+
 	public void loadSegments(String directory) {
 		String filename = String.format("%s/roadSeg-roadID-length-nodeID-nodeID-coords.tab", directory);
 		File file = new File(filename);
@@ -122,7 +147,7 @@ public class Graph {
 				if(firstLine) { firstLine = false; scanIn.nextLine(); continue; }
 				String[] lineArray = scanIn.nextLine().split("\t");
 				try {
-					RoadSegment seg = new RoadSegment(lineArray);
+					RoadSegment seg = new RoadSegment(lineArray, this);
 					edges.add(seg);
 					Road roadOfSegment = roads.get(seg.getRoadID());
 					roadOfSegment.addSegment(seg);
@@ -130,12 +155,14 @@ public class Graph {
 
 				}
 			}
-			this.outputMessage("Completed loading road segments");
+			this.outputMessage("Completed loading intersections");
 		} catch(FileNotFoundException e) {
 
 		}
 	}
-	
+
+
+
 	public void zoomIn() {
 		this.zoom *= 1.10;
 	}
@@ -151,9 +178,21 @@ public class Graph {
 		this.panX = o.getPan().x;
 		this.panY = o.getPan().y;
 	}
-	
+
 	private void outputMessage(String str) {
-		if(frame != null) frame.setLoadingMessage(str);
-		else System.out.println(str);
+		//if(frame != null) frame.setLoadingMessage(str);
+		System.out.println(str);
+	}
+
+	public IntersectionNode getNodeByID(Integer id) {
+		return nodes.get(id);
+	}
+
+	public void selectRoad(String roadName) {
+		Road r = roadTrie.getRoad(roadName);
+		selectRoad(r);
+	}
+	public void selectRoad(Road road) {
+		road.setSelected(true);
 	}
 }

@@ -14,7 +14,8 @@ public class Road {
 	private final Integer notforpede;
 	private final Integer notforbicy;
 	private List<RoadSegment> segments;
-
+	private static Road selectedRoad = null;
+	private boolean selected;
 
 
 
@@ -30,6 +31,7 @@ public class Road {
 		notforpede = Integer.parseInt(line[8]);
 		notforbicy = Integer.parseInt(line[9]);
 		segments = new ArrayList<RoadSegment>();
+		selected = false;
 	}
 
 	public String toString() {
@@ -82,5 +84,14 @@ public class Road {
 
 	public List<RoadSegment> getSegments() {
 		return Collections.unmodifiableList(segments);
+	}
+
+	public void setSelected(boolean sel) {
+		if(selectedRoad != null) for(RoadSegment s : selectedRoad.getSegments()) s.setSelected(false);
+		this.selectedRoad = this;
+		for(RoadSegment s : getSegments()) s.setSelected(sel);
+	}
+	public boolean isSelected() {
+		return selectedRoad == this;
 	}
 }

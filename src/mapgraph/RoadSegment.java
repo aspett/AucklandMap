@@ -1,31 +1,37 @@
 package mapgraph;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.util.*;
 import main.*;
 
 public class RoadSegment implements MapDrawable {
+	private static final Color SELECTEDCOLOR = Color.red;
 	private Integer roadID;
 	private double length;
 	private IntersectionNode nodeFrom;
 	private IntersectionNode nodeTo;
 	private List<Location> coords;
+	private boolean selected;
 
-	public RoadSegment(String[] line) throws NumberFormatException{
+	public RoadSegment(String[] line, Graph g) throws NumberFormatException{
 		coords = new ArrayList<Location>();
+		selected = false;
 
 		roadID = Integer.parseInt(line[0]);
 		length = Double.parseDouble(line[1]);
 		//TODO convert to IntersectionNode objects.
 		int nodeFrom = Integer.parseInt(line[2]);
+		this.nodeFrom = g.getNodeByID(nodeFrom);
 		int nodeTo = Integer.parseInt(line[3]);
+		this.nodeTo = g.getNodeByID(nodeTo);
 		for(int i = 4; i < line.length; i += 2) {
 			Double lat = Double.parseDouble(line[i]);
 			Double lon = Double.parseDouble(line[i+1]);
 			coords.add(Location.newFromLatLon(lat, lon));
 		}
 	}
-	
+
 	public void draw(Graphics2D g2d, Location origin, double scale) {
 		Path2D path = new Path2D.Double();
 		//System.out.printf("%d / %d\n", i++, edges.size());
@@ -43,7 +49,9 @@ public class RoadSegment implements MapDrawable {
 				path.lineTo(x, y);
 			}
 		}
+		if(this.selected) g2d.setColor(SELECTEDCOLOR);
 		g2d.draw(path);
+		if(this.selected) g2d.setColor(Color.BLACK);
 	}
 
 	@Override
@@ -79,6 +87,13 @@ public class RoadSegment implements MapDrawable {
 
 	public List<Location> getCoords() {
 		return coords;
+	}
+
+	public void setSelected(boolean sel) {
+		this.selected = sel;
+	}
+	public boolean isSelected() {
+		return this.selected;
 	}
 
 
