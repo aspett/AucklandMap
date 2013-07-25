@@ -2,6 +2,7 @@ package mapgraph;
 
 import java.awt.*;
 import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 import java.io.*;
 import java.util.*;
 
@@ -11,12 +12,14 @@ import main.Location;
 import main.MapFrame;
 import main.ViewingDimensions;
 import indexstructures.*;
+import indexstructures.quadtree.QuadTree;
 
 public class Graph {
 	private Map<Integer, IntersectionNode> nodes;
 	private Set<RoadSegment> edges;
 	private Map<Integer, Road> roads;
 	private MapFrame frame;
+	public QuadTree intersectionQuad;
 	private double maxX, maxY, minX, minY;
 
 	private double zoom = 1.0;
@@ -36,6 +39,7 @@ public class Graph {
 		nodes = new HashMap<Integer, IntersectionNode>();
 		edges = new HashSet<RoadSegment>();
 		roads = new HashMap<Integer, Road>();
+
 		maxX = 0;
 		maxY = 0;
 		minX = 0;
@@ -75,6 +79,7 @@ public class Graph {
 
 
 		this.buildRanges();
+		this.buildQuadTree();
 	}
 
 	public void buildRanges() {
@@ -85,6 +90,21 @@ public class Graph {
 				if(l.y > maxY) maxY = l.y;
 				if(l.y < minY) minY = l.y;
 			}
+		}
+		for(IntersectionNode n : nodes.values()) {
+			Location l = n.getLocation();
+			if(l.x > maxX) maxX = l.x;
+			if(l.x < minX) minX = l.x;
+			if(l.y > maxY) maxY = l.y;
+			if(l.y < minY) minY = l.y;
+		}
+	}
+
+	public void buildQuadTree() {
+		System.out.println("Building Quad Tree....");
+		intersectionQuad = new QuadTree(new Rectangle2D.Double(minX, minY, maxX-minX, maxY-minY));
+		for(IntersectionNode n : nodes.values()) {
+			intersectionQuad.add(n);
 		}
 	}
 
@@ -126,6 +146,7 @@ public class Graph {
 				try {
 					IntersectionNode node = new IntersectionNode(lineArray);
 					nodes.put(node.getID(), node);
+
 				}catch(NumberFormatException e) {
 
 				}

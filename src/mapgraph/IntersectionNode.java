@@ -20,7 +20,6 @@ public class IntersectionNode implements MapDrawable {
 	public IntersectionNode(String[] line) throws NumberFormatException {
 		id = Integer.parseInt(line[0]);
 		location = Location.newFromLatLon(Double.parseDouble(line[1]), Double.parseDouble(line[2]));
-		System.out.printf("Loaded: %s\n", this.toString());
 	}
 
 

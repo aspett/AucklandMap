@@ -78,7 +78,13 @@ public class AucklandMap {
 
 		drawingPanel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
-            	//panelClick(evt);
+            	ViewingDimensions vd = mapGraph.getViewingDimensions();
+            	Point p = new Point(evt.getX(),evt.getY());
+            	Location loc = Location.newFromPoint(p, vd.getOrigin(), vd.getScale());
+            	IntersectionNode closest = mapGraph.intersectionQuad.find(loc);
+            	System.out.printf("Clicked at point %s\n" +
+            			" = Location %s\n" +
+            			" = Node %s\n\n", p, loc, closest == null ? "null" : closest.toString());
             }
         });
 		drawingPanel.addMouseWheelListener(new MouseWheelListener() {
@@ -130,7 +136,7 @@ public class AucklandMap {
 			public void mouseMoved(MouseEvent e) {
 				mouseX2 = e.getX();
 				mouseY2 = e.getY();
-				//drawingPanel.repaint();
+				drawingPanel.repaint();
 			}
             public void mouseDragged(MouseEvent e) {
                 int x = e.getX() - mouseX;
@@ -191,9 +197,9 @@ public class AucklandMap {
 		mapGraph.draw(g, new Dimension(drawingPanel.getWidth(), drawingPanel.getHeight()));
 
 		//DEBUG
-		/*ViewingDimensions vd = mapGraph.getViewingDimensions();
+		ViewingDimensions vd = mapGraph.getViewingDimensions();
 		g.drawString(String.format("%s", Location.newFromPoint(new Point(mouseX2,mouseY2), vd.getOrigin(), vd.getScale())),
-				(int) (new Dimension(drawingPanel.getWidth(), drawingPanel.getHeight()).getWidth()-300), 100);*/
+				(int) (new Dimension(drawingPanel.getWidth(), drawingPanel.getHeight()).getWidth()-300), 100);
 	}
 
 	public void panelClick(MouseEvent e) {
