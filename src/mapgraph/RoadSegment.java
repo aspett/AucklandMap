@@ -9,6 +9,7 @@ public class RoadSegment implements MapDrawable {
 	private static final Color SELECTEDCOLOR = Color.red;
 	private Integer roadID;
 	private double length;
+	private Road belongsToRoad;
 	private IntersectionNode nodeFrom;
 	private IntersectionNode nodeTo;
 	private List<Location> coords;
@@ -25,6 +26,8 @@ public class RoadSegment implements MapDrawable {
 		this.nodeFrom = g.getNodeByID(nodeFrom);
 		int nodeTo = Integer.parseInt(line[3]);
 		this.nodeTo = g.getNodeByID(nodeTo);
+		this.nodeFrom.addEdgeOut(this);
+		this.nodeTo.addEdgeIn(this);
 		for(int i = 4; i < line.length; i += 2) {
 			Double lat = Double.parseDouble(line[i]);
 			Double lon = Double.parseDouble(line[i+1]);
@@ -94,6 +97,10 @@ public class RoadSegment implements MapDrawable {
 	}
 	public boolean isSelected() {
 		return this.selected;
+	}
+
+	public void setParentRoad(Road r) {
+		this.belongsToRoad = r;
 	}
 
 

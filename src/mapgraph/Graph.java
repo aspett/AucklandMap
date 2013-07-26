@@ -61,17 +61,17 @@ public class Graph {
 		/*g.setColor(new Color(255,0,0));
 		g.drawString(String.format("Scale: %f panX: %f panY:%f", scale,panX,panY), (int) (dimensions.getWidth()-300), 50);
 		g.setColor(Color.BLACK);*/
-		
+
 		if(intersectionQuad != null) intersectionQuad.draw(g2d, origin, scale);
-		
+
 		for(IntersectionNode n : nodes.values()) {
 			n.draw(g2d, origin, scale);
 		}
 		for(RoadSegment s : edges) {
 			s.draw(g2d, origin, scale);
 		}
-		
-		
+
+
 
 
 
@@ -143,10 +143,8 @@ public class Graph {
 		File file = new File(filename);
 		try {
 			Scanner scanIn = new Scanner(file);
-			boolean firstLine = true;
 			this.outputMessage("Loading intersections");
 			while(scanIn.hasNextLine()) {
-				if(firstLine) { firstLine = false; scanIn.nextLine(); continue; }
 				String[] lineArray = scanIn.nextLine().split("\t");
 				try {
 					IntersectionNode node = new IntersectionNode(lineArray);
@@ -177,6 +175,7 @@ public class Graph {
 					edges.add(seg);
 					Road roadOfSegment = roads.get(seg.getRoadID());
 					roadOfSegment.addSegment(seg);
+					seg.setParentRoad(roadOfSegment);
 				}catch(NumberFormatException e) {
 
 				}

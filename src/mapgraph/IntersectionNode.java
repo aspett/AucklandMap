@@ -19,6 +19,8 @@ public class IntersectionNode implements MapDrawable {
 	private static IntersectionNode selectedNode;
 
 	public IntersectionNode(String[] line) throws NumberFormatException {
+		edgesOut = new HashSet<RoadSegment>();
+		edgesIn = new HashSet<RoadSegment>();
 		id = Integer.parseInt(line[0]);
 		location = Location.newFromLatLon(Double.parseDouble(line[1]), Double.parseDouble(line[2]));
 	}
@@ -49,8 +51,15 @@ public class IntersectionNode implements MapDrawable {
 	public String toString() {
 		return String.format("[%d, (%f, %f)]", id, location.x, location.y);
 	}
-	
+
 	public static void setSelectedNode(IntersectionNode n) {
 		IntersectionNode.selectedNode = n;
+	}
+
+	public void addEdgeOut(RoadSegment s) {
+		edgesOut.add(s);
+	}
+	public void addEdgeIn(RoadSegment s) {
+		edgesIn.add(s);
 	}
 }
