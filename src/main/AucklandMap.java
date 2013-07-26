@@ -9,6 +9,7 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import main.autosuggester.AutoSuggestionTextField;
 import mapgraph.*;
 
 
@@ -16,7 +17,7 @@ public class AucklandMap {
 	private MapFrame mapFrame;
 	private JPanel drawingPanel;
 	private JTextArea textOutput;
-	private JTextField searchField;
+	private AutoSuggestionTextField searchField;
 	private JButton searchButton;
 	private JMenuItem openMenuItem;
 	private DefaultListModel roadList;
@@ -58,7 +59,7 @@ public class AucklandMap {
 		roadListPanel = mapFrame.getRoadListPanel();
 
 
-		final ActionListener searchButtonListener = new ActionListener() {
+		/*final ActionListener searchButtonListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				roadList.clear();
 				for(String road : mapGraph.roadTrie.matchRoads(searchField.getText())) {
@@ -74,7 +75,7 @@ public class AucklandMap {
 			public void keyReleased(KeyEvent arg0) {searchButtonListener.actionPerformed(null);}
 			public void keyTyped(KeyEvent arg0) {searchButtonListener.actionPerformed(null);}
 
-		});
+		});*/
 
 		drawingPanel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {

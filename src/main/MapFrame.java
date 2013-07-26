@@ -3,6 +3,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import main.autosuggester.AutoSuggestionTextField;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -57,7 +59,7 @@ public class MapFrame extends JFrame {
         };
         searchLabel = new JLabel();
         searchButton = new JButton();
-        searchTextField = new JTextField();
+        searchTextField = new AutoSuggestionTextField<String>();
         jScrollPane1 = new JScrollPane();
         outputTextArea = new JTextArea();
         menuBar = new JMenuBar();
@@ -96,7 +98,7 @@ public class MapFrame extends JFrame {
         gridBagConstraints.anchor = GridBagConstraints.WEST;
         searchPanel.add(searchButton, gridBagConstraints);
 
-        searchTextField.setText("Road Name");
+        //searchTextField.setText("Road Name");
         searchTextField.setToolTipText("");
         searchTextField.setMinimumSize(new Dimension(50, 30));
         searchTextField.setPreferredSize(new Dimension(150, 30));
@@ -160,7 +162,7 @@ public class MapFrame extends JFrame {
     public JButton getSearchButton() {
     	return this.searchButton;
     }
-    public JTextField getSearchTextField() {
+    public AutoSuggestionTextField<String> getSearchTextField() {
     	return this.searchTextField;
     }
     public JMenuItem getOpenMenu() {
@@ -182,7 +184,7 @@ public class MapFrame extends JFrame {
     private JButton searchButton;
     private JLabel searchLabel;
     private JPanel searchPanel;
-    private JTextField searchTextField;
+    private AutoSuggestionTextField<String> searchTextField;
     private JMenuBar menuBar;
     private JMenuItem openMenuItem;
     private JList roadListPanel;

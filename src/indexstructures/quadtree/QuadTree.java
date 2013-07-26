@@ -16,13 +16,13 @@ public class QuadTree implements MapDrawable{
 	private QuadTree northEast;
 	private QuadTree southWest;
 	private QuadTree southEast;
-	
+
 	private static boolean k = false;
 
 	private Set<IntersectionNode> points;
 
 	private MapBoundingBox bounds;
-	private static final int MAX_ELEMENTS = 4;
+	private static final int MAX_ELEMENTS = 8;
 
 	public QuadTree(MapBoundingBox bounds) {
 		this.bounds = bounds;
@@ -104,16 +104,13 @@ public class QuadTree implements MapDrawable{
 
 	protected void subDivide() {
 		System.out.println("Subdividing..");
-		if(!k) {
-			//k = true;
-			northWest = new QuadTree(new MapBoundingBox(this.bounds.x, this.bounds.y, this.bounds.width/2, this.bounds.height/2));
-			northEast = new QuadTree(new MapBoundingBox(this.bounds.x + this.bounds.width/2, this.bounds.y, this.bounds.width/2, this.bounds.height/2));
-	
-			southWest = new QuadTree(new MapBoundingBox(this.bounds.x, this.bounds.y + this.bounds.height/2, this.bounds.width/2, this.bounds.height/2));
-			southEast = new QuadTree(new MapBoundingBox(this.bounds.x + this.bounds.width/2, this.bounds.y + this.bounds.height/2, this.bounds.width/2, this.bounds.height/2));
-			for(IntersectionNode n : points) this.add(n);
-			//points.clear();
-		}
+		northWest = new QuadTree(new MapBoundingBox(this.bounds.x, this.bounds.y, this.bounds.width/2, this.bounds.height/2));
+		northEast = new QuadTree(new MapBoundingBox(this.bounds.x + this.bounds.width/2, this.bounds.y, this.bounds.width/2, this.bounds.height/2));
+
+		southWest = new QuadTree(new MapBoundingBox(this.bounds.x, this.bounds.y + this.bounds.height/2, this.bounds.width/2, this.bounds.height/2));
+		southEast = new QuadTree(new MapBoundingBox(this.bounds.x + this.bounds.width/2, this.bounds.y + this.bounds.height/2, this.bounds.width/2, this.bounds.height/2));
+		for(IntersectionNode n : points) this.add(n);
+		//points.clear();
 	}
 
 	@Override
