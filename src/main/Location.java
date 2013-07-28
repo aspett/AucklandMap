@@ -107,6 +107,7 @@ public class Location{
 	double west = 20.0;
 	double east = 120.0;
 	double north = 200.0;
+	@SuppressWarnings("unused")
 	double south = 100.0;
 
 	// the origin of the window corresponds to location (west, north)=(20.0, 200.0)

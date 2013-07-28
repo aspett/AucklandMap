@@ -1,7 +1,10 @@
 package mapgraph;
+import java.awt.Graphics2D;
 import java.util.*;
 
-public class Road {
+import main.Location;
+
+public class Road implements MapDrawable {
 
 	private final Integer id;
 	private final Integer type;
@@ -14,11 +17,7 @@ public class Road {
 	private final Integer notforpede;
 	private final Integer notforbicy;
 	private List<RoadSegment> segments;
-	private static Road selectedRoad = null;
-	private boolean selected;
-
-
-
+	public static Road selectedRoad = null;
 	public Road(String[] line) throws NumberFormatException {
 		id = Integer.parseInt(line[0]);
 		type = Integer.parseInt(line[1]);
@@ -31,7 +30,6 @@ public class Road {
 		notforpede = Integer.parseInt(line[8]);
 		notforbicy = Integer.parseInt(line[9]);
 		segments = new ArrayList<RoadSegment>();
-		selected = false;
 	}
 
 	public String toString() {
@@ -93,5 +91,21 @@ public class Road {
 	}
 	public boolean isSelected() {
 		return selectedRoad == this;
+	}
+	
+	public double getLength() {
+		double r = 0.0;
+		for(RoadSegment s : getSegments()) {
+			r += s.getLength();
+		}
+		return r;
+	}
+
+	@Override
+	public void draw(Graphics2D g, Location origin, double scale) {
+		for(RoadSegment s : getSegments()) {
+			s.draw(g,origin,scale);
+		}
+		
 	}
 }

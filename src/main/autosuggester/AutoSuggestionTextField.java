@@ -99,6 +99,10 @@ public class AutoSuggestionTextField<E> extends JComboBox{
 	public void setSuggestionListener(SuggestionListener<E> listener) {
 		this.listener = listener;
 	}
+	
+	public String getText() {
+		return textField.getText();
+	}
 
 	private class TextListener extends KeyAdapter{
 

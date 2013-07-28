@@ -1,6 +1,8 @@
 package mapgraph;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Stroke;
 import java.awt.geom.Path2D;
 import java.util.*;
 import main.*;
@@ -52,9 +54,17 @@ public class RoadSegment implements MapDrawable {
 				path.lineTo(x, y);
 			}
 		}
-		if(this.selected) g2d.setColor(SELECTEDCOLOR);
+		Stroke str = g2d.getStroke();
+		if(this.selected){
+			g2d.setColor(SELECTEDCOLOR);
+			g2d.setStroke(new BasicStroke(3));
+		}
+
 		g2d.draw(path);
-		if(this.selected) g2d.setColor(Color.BLACK);
+		if(this.selected) { 
+			g2d.setStroke(str);
+			g2d.setColor(Color.BLACK);
+		}
 	}
 
 	@Override
@@ -101,6 +111,10 @@ public class RoadSegment implements MapDrawable {
 
 	public void setParentRoad(Road r) {
 		this.belongsToRoad = r;
+	}
+	
+	public Road getParentRoad() {
+		return this.belongsToRoad;
 	}
 
 

@@ -3,8 +3,6 @@ package indexstructures.quadtree;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 import mapgraph.*;
@@ -17,7 +15,6 @@ public class QuadTree implements MapDrawable{
 	private QuadTree southWest;
 	private QuadTree southEast;
 
-	private static boolean k = false;
 
 	private Set<IntersectionNode> points;
 
@@ -27,7 +24,7 @@ public class QuadTree implements MapDrawable{
 	public QuadTree(MapBoundingBox bounds) {
 		this.bounds = bounds;
 		this.points = new HashSet<IntersectionNode>();
-		System.out.printf("Made a quadtree with bounds [x=%f,y=%f,w=%f,h=%f]\n", bounds.x, bounds.y, bounds.width, bounds.height);
+		//System.out.printf("Made a quadtree with bounds [x=%f,y=%f,w=%f,h=%f]\n", bounds.x, bounds.y, bounds.width, bounds.height);
 	}
 
 	public boolean add(IntersectionNode intersection) {
@@ -54,13 +51,13 @@ public class QuadTree implements MapDrawable{
 	}
 
 	public IntersectionNode find(Location loc) {
-		System.out.printf("Searching bounds [x=%f,y=%f,w=%f,h=%f]\n", bounds.x, bounds.y, bounds.width, bounds.height);
+		//System.out.printf("Searching bounds [x=%f,y=%f,w=%f,h=%f]\n", bounds.x, bounds.y, bounds.width, bounds.height);
 		//Point2D point = new Point2D.Double(loc.x, loc.y);
 		if(!bounds.contains(loc.x,loc.y))
 			return null;
 
 		if(northWest != null) { //Search the children..
-			System.out.println("Searching children..");
+			//System.out.println("Searching children..");
 			if(northWest.getBounds().contains(loc.x,loc.y)) return northWest.find(loc);
 			if(northEast.getBounds().contains(loc.x,loc.y)) return northEast.find(loc);
 			if(southWest.getBounds().contains(loc.x,loc.y)) return southWest.find(loc);
@@ -82,13 +79,13 @@ public class QuadTree implements MapDrawable{
 		}
 	}
 	public HashSet<IntersectionNode> findall(Location loc) {
-		System.out.printf("Searching bounds [x=%f,y=%f,w=%f,h=%f]\n", bounds.x, bounds.y, bounds.width, bounds.height);
+		//System.out.printf("Searching bounds [x=%f,y=%f,w=%f,h=%f]\n", bounds.x, bounds.y, bounds.width, bounds.height);
 		//Point2D point = new Point2D.Double(loc.x, loc.y);
 		if(!bounds.contains(loc.x,loc.y))
 			return null;
 
 		if(northWest != null) { //Search the children..
-			System.out.println("Searching children..");
+			//System.out.println("Searching children..");
 			if(northWest.getBounds().contains(loc.x,loc.y)) return northWest.findall(loc);
 			if(northEast.getBounds().contains(loc.x,loc.y)) return northEast.findall(loc);
 			if(southWest.getBounds().contains(loc.x,loc.y)) return southWest.findall(loc);
@@ -103,7 +100,7 @@ public class QuadTree implements MapDrawable{
 	public MapBoundingBox getBounds() { return this.bounds; }
 
 	protected void subDivide() {
-		System.out.println("Subdividing..");
+		//System.out.println("Subdividing..");
 		northWest = new QuadTree(new MapBoundingBox(this.bounds.x, this.bounds.y, this.bounds.width/2, this.bounds.height/2));
 		northEast = new QuadTree(new MapBoundingBox(this.bounds.x + this.bounds.width/2, this.bounds.y, this.bounds.width/2, this.bounds.height/2));
 

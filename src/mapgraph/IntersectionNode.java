@@ -62,4 +62,24 @@ public class IntersectionNode implements MapDrawable {
 	public void addEdgeIn(RoadSegment s) {
 		edgesIn.add(s);
 	}
+	private Set<String> getRoads(Set<RoadSegment> set) {
+		HashSet<String> ret = new HashSet<String>();
+		for(RoadSegment rs : set) {
+			Road r = rs.getParentRoad();
+			String name = String.format("%s %s", r.getName(), r.getCity());
+			ret.add(name);
+		}
+		return ret;
+	}
+	public Set<String> getRoadsIn() {
+		return getRoads(this.edgesIn);
+	}
+	public Set<String> getRoadsOut() {
+		return getRoads(this.edgesOut);
+	}
+	public Set<String> getAllRoads() {
+		HashSet<RoadSegment> ret = new HashSet<RoadSegment>(this.edgesIn);
+		ret.addAll(this.edgesOut);
+		return getRoads(ret);
+	}
 }

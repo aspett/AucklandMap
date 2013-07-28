@@ -4,6 +4,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import main.autosuggester.AutoSuggestionTextField;
+import main.autosuggester.RoadAutoSuggestor;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -84,7 +85,8 @@ public class MapFrame extends JFrame {
         searchPanel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         searchPanel.setLayout(new GridBagLayout());
 
-        searchLabel.setText("Search:");
+        searchLabel.setText("Search:  ");
+        searchLabel.setForeground(new Color(255,255,255));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -102,6 +104,7 @@ public class MapFrame extends JFrame {
         searchTextField.setToolTipText("");
         searchTextField.setMinimumSize(new Dimension(50, 30));
         searchTextField.setPreferredSize(new Dimension(150, 30));
+        //searchTextField.setAutoSuggestor(new RoadAutoSuggestor(this.owner.getMapGraph()));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -124,11 +127,11 @@ public class MapFrame extends JFrame {
 
         jScrollPane1.setAutoscrolls(true);
 
-        /*outputTextArea.setEditable(false);
+        outputTextArea.setEditable(false);
         outputTextArea.setColumns(20);
-        outputTextArea.setRows(5);*/
-        roadListPanel.setVisibleRowCount(5);
-        jScrollPane1.setViewportView(roadListPanel);
+        outputTextArea.setRows(5);
+        //roadListPanel.setVisibleRowCount(5);
+        jScrollPane1.setViewportView(outputTextArea);
 
 
         gridBagConstraints = new GridBagConstraints();
@@ -167,9 +170,6 @@ public class MapFrame extends JFrame {
     }
     public JMenuItem getOpenMenu() {
     	return this.openMenuItem;
-    }
-    public DefaultListModel getRoadList() {
-    	return this.roadList;
     }
     public JList getRoadListPanel() {
     	return this.roadListPanel;

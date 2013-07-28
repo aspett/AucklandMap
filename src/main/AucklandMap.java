@@ -1,15 +1,10 @@
 package main;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
-
+import java.awt.geom.Point2D;
 import javax.swing.*;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import main.autosuggester.AutoSuggestionTextField;
+import main.autosuggester.SuggestionListener;
 import mapgraph.*;
 
 
@@ -17,15 +12,15 @@ public class AucklandMap {
 	private MapFrame mapFrame;
 	private JPanel drawingPanel;
 	private JTextArea textOutput;
-	private AutoSuggestionTextField searchField;
+	private AutoSuggestionTextField<String> searchField;
 	private JButton searchButton;
 	private JMenuItem openMenuItem;
-	private DefaultListModel roadList;
-	private JList roadListPanel;
 
 	private int mouseX;
 	private int mouseY;
+	@SuppressWarnings("unused")
 	private int mouseX2;
+	@SuppressWarnings("unused")
 	private int mouseY2;
     private Graph mapGraph;
 
@@ -55,16 +50,11 @@ public class AucklandMap {
 		searchField = mapFrame.getSearchTextField();
 		searchButton = mapFrame.getSearchButton();
 		openMenuItem = mapFrame.getOpenMenu();
-		roadList = mapFrame.getRoadList();
-		roadListPanel = mapFrame.getRoadListPanel();
 
 
-		/*final ActionListener searchButtonListener = new ActionListener() {
+		final ActionListener searchButtonListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				roadList.clear();
-				for(String road : mapGraph.roadTrie.matchRoads(searchField.getText())) {
-					roadList.addElement(String.format("%s\n",road));
-				}
+				searchField.getSuggestionListener().onSuggestionSelected(searchField.getText());
 			}
 		};
 
@@ -75,7 +65,7 @@ public class AucklandMap {
 			public void keyReleased(KeyEvent arg0) {searchButtonListener.actionPerformed(null);}
 			public void keyTyped(KeyEvent arg0) {searchButtonListener.actionPerformed(null);}
 
-		});*/
+		});
 
 		drawingPanel.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
@@ -83,13 +73,35 @@ public class AucklandMap {
             	Point p = new Point(evt.getX(),evt.getY());
             	Location loc = Location.newFromPoint(p, vd.getOrigin(), vd.getScale());
             	IntersectionNode closest = mapGraph.intersectionQuad.find(loc);
-            	HashSet<IntersectionNode> all = mapGraph.intersectionQuad.findall(loc);
-            	System.out.printf("Clicked at point %s\n" +
+            	boolean closeEnough = false;
+            	if(closest != null) {
+	            	Point locPoint = closest.getLocation().getPoint(vd.getOrigin(), vd.getScale());
+	            	Point2D p2 = (Point2D)p;
+	            	Point2D loc2 = (Point2D) locPoint;
+	            	double dist = p2.distance(loc2);
+	            	System.out.printf("p2 %s, loc2 %s, dist %f\n", p2,loc2,dist);
+	            	if(p2.distance(loc2) < 7) closeEnough = true;
+            	
+            	/* DEBUG System.out.printf("Clicked at point %s\n" +
             			" = Location %s\n" +
             			" = Node %s\n" +
-            			" = Nodes: %s\n\n", p, loc, closest == null ? "null" : closest.toString(), all);
-            	IntersectionNode.setSelectedNode(closest);
-            	drawingPanel.repaint();
+            			" = Nodes: %s\n\n", p, loc, closest == null ? "null" : closest.toString(), all);*/
+	            	
+            	}
+            	
+            	
+            	if(closest != null && closeEnough) {
+            		IntersectionNode.setSelectedNode(closest);
+                	drawingPanel.repaint();
+                	textOutput.setText("");
+                	StringBuilder allRoads = new StringBuilder("");
+	            	for(String s : closest.getAllRoads()) {
+	            		allRoads.append(s+", ");
+	            	}
+	            	String out = String.format("Intersection information:\n" +
+	            			"ID: %d,\nRoads connected by it:\n%s", closest.getID(), allRoads);
+	            	textOutput.append(out);
+            	}
             }
         });
 		drawingPanel.addMouseWheelListener(new MouseWheelListener() {
@@ -98,10 +110,8 @@ public class AucklandMap {
             	Location bOrigin = vd.getOrigin();
 
             	double bScale = vd.getScale();
-            	double bZoom = vd.getZoom();
 
             	Location centre = Location.newFromPoint(new Point(drawingPanel.getWidth()/2, drawingPanel.getHeight()/2), bOrigin, bScale);
-            	Point centrePoint = centre.getPoint(bOrigin, bScale);
 
             	if(e.getWheelRotation() < 0) {
             		vd.setZoom(vd.getZoom()*1.10);
@@ -156,18 +166,35 @@ public class AucklandMap {
             }
         });
 
-		roadListPanel.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent e) {
+		searchField.setSuggestionListener(new SuggestionListener<String>() {
 
-				String selectedValue = (String)roadListPanel.getSelectedValue();
-				if(selectedValue != null) {
-					selectedValue = selectedValue.trim();
-					Road r = mapGraph.roadTrie.getRoad(selectedValue);
-					r.setSelected(true);
-					drawingPanel.repaint();
-				}
+			@Override
+			public void onSuggestionSelected(String query) {
+				selectRoad(query);
 			}
 
+			@Override
+			public void onEnter(String query) {
+				selectRoad(query);
+			}
+
+			@Override
+			public void onDeselect() {
+			}
+			
+			public void selectRoad(String str) {
+				str = str.trim();
+				Road r = mapGraph.roadTrie.getRoad(str);
+				if(r != null) {
+					r.setSelected(true);
+					drawingPanel.repaint();
+					textOutput.setText("");
+					String roadInformation = String.format("Road information:\n" +
+							"ID: %d, Name: %s, City/Town: %s,\nTotal length: %f, #Segments: %d", r.getId(), r.getName(), r.getCity(), r.getLength(), r.getSegments().size());
+					textOutput.append(roadInformation);
+				}
+			}
+			
 		});
 
 
@@ -177,8 +204,12 @@ public class AucklandMap {
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				while(fc.getSelectedFile() == null)
 					fc.showDialog(mapFrame, "Open");
+				
 				mapGraph = new Graph(mapFrame);
+				mapGraph.setOwner(thisMap);
 				mapGraph.loadStructures(fc.getSelectedFile().getAbsolutePath());
+				mapGraph.attachAutoSuggestor(searchField);
+				
 				drawingPanel.repaint();
 
 			}
@@ -186,32 +217,33 @@ public class AucklandMap {
 		openMenuItem.addActionListener(openMenuListener);
 		openMenuListener.actionPerformed(null);
 
-		//TODO do something now.
-
 
 	}
 
 
 
 	public void drawMap(Graphics g) {
-        /*g.drawString("This is my custom Panel!",10,20);
-        g.setColor(Color.RED);
-        g.fillRect(squareX,squareY,squareW,squareH);
-        g.setColor(Color.BLACK);
-        g.drawRect(squareX,squareY,squareW,squareH);*/
 		mapGraph.draw(g, new Dimension(drawingPanel.getWidth(), drawingPanel.getHeight()));
 
-		//DEBUG
+		/*//DEBUG
 		ViewingDimensions vd = mapGraph.getViewingDimensions();
 		g.drawString(String.format("%s", Location.newFromPoint(new Point(mouseX2,mouseY2), vd.getOrigin(), vd.getScale())),
-				(int) (new Dimension(drawingPanel.getWidth(), drawingPanel.getHeight()).getWidth()-300), 100);
+				(int) (new Dimension(drawingPanel.getWidth(), drawingPanel.getHeight()).getWidth()-300), 100);*/
 	}
 
 	public void panelClick(MouseEvent e) {
-		if(e.getButton() == e.BUTTON1) {
+		if(e.getButton() == MouseEvent.BUTTON1) {
 			drawingPanel.repaint();
 			textOutput.append("Clicked again\n");
 		}
+	}
+	
+	public Graph getMapGraph() {
+		return mapGraph;
+	}
+	
+	public void outputText(String str) {
+		if(textOutput != null) textOutput.append(str+"\n");
 	}
 
 }

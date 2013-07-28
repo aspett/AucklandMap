@@ -8,9 +8,8 @@ import java.util.*;
 
 import javax.swing.JFrame;
 
-import main.Location;
-import main.MapFrame;
-import main.ViewingDimensions;
+import main.*;
+import main.autosuggester.*;
 import indexstructures.*;
 import indexstructures.quadtree.MapBoundingBox;
 import indexstructures.quadtree.QuadTree;
@@ -20,6 +19,7 @@ public class Graph {
 	private Set<RoadSegment> edges;
 	private Map<Integer, Road> roads;
 	private MapFrame frame;
+	private AucklandMap owner;
 	public QuadTree intersectionQuad;
 	private double maxX, maxY, minX, minY;
 
@@ -62,7 +62,7 @@ public class Graph {
 		g.drawString(String.format("Scale: %f panX: %f panY:%f", scale,panX,panY), (int) (dimensions.getWidth()-300), 50);
 		g.setColor(Color.BLACK);*/
 
-		if(intersectionQuad != null) intersectionQuad.draw(g2d, origin, scale);
+		//if(intersectionQuad != null) intersectionQuad.draw(g2d, origin, scale);
 
 		for(IntersectionNode n : nodes.values()) {
 			n.draw(g2d, origin, scale);
@@ -70,6 +70,8 @@ public class Graph {
 		for(RoadSegment s : edges) {
 			s.draw(g2d, origin, scale);
 		}
+		if(Road.selectedRoad != null)
+			Road.selectedRoad.draw(g2d, origin, scale);
 
 
 
@@ -78,13 +80,15 @@ public class Graph {
 	}
 
 	public void loadStructures(String directory) {
-		this.loadRoads(directory);
-		this.loadIntersections(directory);
-		this.loadSegments(directory);
+		boolean cont = true;
+		if(cont && !this.loadRoads(directory)) cont = false;
+		if(cont && !this.loadIntersections(directory)) cont = false;
+		if(cont && !this.loadSegments(directory)) cont = false;
 
-
-		this.buildRanges();
-		this.buildQuadTree();
+		if(cont) {
+			this.buildRanges();
+			this.buildQuadTree();
+		}
 	}
 
 	public void buildRanges() {
@@ -113,7 +117,7 @@ public class Graph {
 		}
 	}
 
-	public void loadRoads(String directory) {
+	public boolean loadRoads(String directory) {
 		String roadFilename = String.format("%s/roadID-roadInfo.tab", directory);
 		File roadFile = new File(roadFilename);
 		try {
@@ -134,11 +138,13 @@ public class Graph {
 			}
 			this.outputMessage("Completed loading roads.");
 		} catch (FileNotFoundException e) {
-
+			outputMessage("File path does not exist. Please open a new directory from the File menu.");
+			return false;
 		}
+		return true;
 	}
 
-	public void loadIntersections(String directory) {
+	public boolean loadIntersections(String directory) {
 		String filename = String.format("%s/nodeID-lat-lon.tab", directory);
 		File file = new File(filename);
 		try {
@@ -156,11 +162,13 @@ public class Graph {
 			}
 			this.outputMessage("Completed loading road segments");
 		} catch(FileNotFoundException e) {
-			throw new RuntimeException(e.getMessage());
+			outputMessage("File path does not exist. Please open a new directory from the File menu.");
+			return false;
 		}
+		return true;
 	}
 
-	public void loadSegments(String directory) {
+	public boolean loadSegments(String directory) {
 		String filename = String.format("%s/roadSeg-roadID-length-nodeID-nodeID-coords.tab", directory);
 		File file = new File(filename);
 		try {
@@ -182,8 +190,10 @@ public class Graph {
 			}
 			this.outputMessage("Completed loading intersections");
 		} catch(FileNotFoundException e) {
-
+			outputMessage("File path does not exist. Please open a new directory from the File menu.");
+			return false;
 		}
+		return true;
 	}
 
 
@@ -205,7 +215,7 @@ public class Graph {
 	}
 
 	private void outputMessage(String str) {
-		//if(frame != null) frame.setLoadingMessage(str);
+		if(this.owner != null) this.owner.outputText(str);
 		System.out.println(str);
 	}
 
@@ -219,5 +229,13 @@ public class Graph {
 	}
 	public void selectRoad(Road road) {
 		road.setSelected(true);
+	}
+	
+	public void attachAutoSuggestor(AutoSuggestionTextField f) {
+		f.setAutoSuggestor(new RoadAutoSuggestor(roadTrie));
+	}
+	
+	public void setOwner(AucklandMap map) {
+		this.owner = map;
 	}
 }
