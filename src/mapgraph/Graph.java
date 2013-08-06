@@ -10,14 +10,15 @@ import javax.swing.JFrame;
 
 import main.*;
 import main.autosuggester.*;
-import indexstructures.*;
 import indexstructures.quadtree.MapBoundingBox;
 import indexstructures.quadtree.QuadTree;
+import indexstructures.roadtrie.*;
 
 public class Graph {
 	private Map<Integer, IntersectionNode> nodes;
 	private Set<RoadSegment> edges;
 	private Map<Integer, Road> roads;
+	private Map<String, RoadGroup> roadGroups;
 	private MapFrame frame;
 	private AucklandMap owner;
 	public QuadTree intersectionQuad;
@@ -40,6 +41,7 @@ public class Graph {
 		nodes = new HashMap<Integer, IntersectionNode>();
 		edges = new HashSet<RoadSegment>();
 		roads = new HashMap<Integer, Road>();
+		roadGroups = new HashMap<String, RoadGroup>();
 
 		maxX = 0;
 		maxY = 0;
@@ -62,16 +64,17 @@ public class Graph {
 		g.drawString(String.format("Scale: %f panX: %f panY:%f", scale,panX,panY), (int) (dimensions.getWidth()-300), 50);
 		g.setColor(Color.BLACK);*/
 
-		//if(intersectionQuad != null) intersectionQuad.draw(g2d, origin, scale);
+		if(intersectionQuad != null) intersectionQuad.draw(g2d, origin, scale);
 
 		for(IntersectionNode n : nodes.values()) {
 			n.draw(g2d, origin, scale);
 		}
 		for(RoadSegment s : edges) {
-			s.draw(g2d, origin, scale);
+			if(s.getParentRoad().drawableRoad())
+				s.draw(g2d, origin, scale);
 		}
-		if(Road.selectedRoad != null)
-			Road.selectedRoad.draw(g2d, origin, scale);
+		if(RoadGroup.getSelected() != null)
+			RoadGroup.getSelected().draw(g2d, origin, scale);
 
 
 
@@ -130,7 +133,18 @@ public class Graph {
 				try {
 					Road road = new Road(lineArray);
 					roads.put(road.getId(), road);
-					roadTrie.addNode(String.format("%s %s", road.getName(), road.getCity()), road);
+					
+					String groupName = String.format("%s %s", road.getName(), road.getCity());
+					RoadGroup group = null;
+					if(!roadGroups.containsKey(groupName)) {
+						group = new RoadGroup(road.getName(), road.getCity());
+						roadGroups.put(groupName, group);
+					}
+					else {
+						group = roadGroups.get(groupName);
+					}
+					group.addRoad(road);
+					roadTrie.addNode(groupName, group);
 
 				} catch(NumberFormatException e) {
 					continue;
@@ -224,8 +238,8 @@ public class Graph {
 	}
 
 	public void selectRoad(String roadName) {
-		Road r = roadTrie.getRoad(roadName);
-		selectRoad(r);
+		RoadGroup r = roadTrie.getRoad(roadName);
+		RoadGroup.setSelected(r);
 	}
 	public void selectRoad(Road road) {
 		road.setSelected(true);

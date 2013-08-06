@@ -6,6 +6,7 @@ import javax.swing.*;
 import main.autosuggester.AutoSuggestionTextField;
 import main.autosuggester.SuggestionListener;
 import mapgraph.*;
+import indexstructures.roadtrie.*;
 
 
 public class AucklandMap {
@@ -184,13 +185,13 @@ public class AucklandMap {
 			
 			public void selectRoad(String str) {
 				str = str.trim();
-				Road r = mapGraph.roadTrie.getRoad(str);
+				RoadGroup r = mapGraph.roadTrie.getRoad(str);
 				if(r != null) {
-					r.setSelected(true);
+					RoadGroup.setSelected(r);
 					drawingPanel.repaint();
 					textOutput.setText("");
 					String roadInformation = String.format("Road information:\n" +
-							"ID: %d, Name: %s, City/Town: %s,\nTotal length: %f, #Segments: %d", r.getId(), r.getName(), r.getCity(), r.getLength(), r.getSegments().size());
+							"Name: %s, City/Town: %s,\nTotal length: %f, #Segments: %d", r.getName(), r.getCity(), r.getLength(), r.getSegments().size());
 					textOutput.append(roadInformation);
 				}
 			}
@@ -201,9 +202,10 @@ public class AucklandMap {
 		ActionListener openMenuListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
+				fc.setDialogTitle("Open data folder");
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				while(fc.getSelectedFile() == null)
-					fc.showDialog(mapFrame, "Open");
+					fc.showDialog(mapFrame, "Open data folder");
 				
 				mapGraph = new Graph(mapFrame);
 				mapGraph.setOwner(thisMap);

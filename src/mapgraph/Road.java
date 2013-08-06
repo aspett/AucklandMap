@@ -106,6 +106,10 @@ public class Road implements MapDrawable {
 		for(RoadSegment s : getSegments()) {
 			s.draw(g,origin,scale);
 		}
-		
+	}
+	
+	public boolean drawableRoad() {
+		if((this.type > 0 && this.type < 13) || this.type == 22 || this.type == 26) return true;
+		return false;
 	}
 }

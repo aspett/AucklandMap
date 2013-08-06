@@ -1,9 +1,9 @@
 package main.autosuggester;
 
-import indexstructures.RoadTrie;
 
 import java.util.ArrayList;
 import java.util.List;
+import indexstructures.roadtrie.*;
 
 public class RoadAutoSuggestor implements AutoSuggestor<String> {
 
@@ -11,7 +11,6 @@ public class RoadAutoSuggestor implements AutoSuggestor<String> {
 
 	public RoadAutoSuggestor(RoadTrie roadTrie) {
 		this.roadTrie = roadTrie;
-		System.out.println("Initialized autosuggestor");
 	}
 
 	@Override

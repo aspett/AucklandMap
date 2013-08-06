@@ -23,7 +23,6 @@ public class RoadSegment implements MapDrawable {
 
 		roadID = Integer.parseInt(line[0]);
 		length = Double.parseDouble(line[1]);
-		//TODO convert to IntersectionNode objects.
 		int nodeFrom = Integer.parseInt(line[2]);
 		this.nodeFrom = g.getNodeByID(nodeFrom);
 		int nodeTo = Integer.parseInt(line[3]);
@@ -54,17 +53,17 @@ public class RoadSegment implements MapDrawable {
 				path.lineTo(x, y);
 			}
 		}
-		Stroke str = g2d.getStroke();
+		/*Stroke str = g2d.getStroke();
 		if(this.selected){
 			g2d.setColor(SELECTEDCOLOR);
 			g2d.setStroke(new BasicStroke(3));
-		}
+		}*/
 
 		g2d.draw(path);
-		if(this.selected) { 
+		/*if(this.selected) { 
 			g2d.setStroke(str);
 			g2d.setColor(Color.BLACK);
-		}
+		}*/
 	}
 
 	@Override
