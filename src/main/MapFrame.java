@@ -145,6 +145,14 @@ public class MapFrame extends JFrame {
         menuBar.add(fileMenu);
         openMenuItem = new JMenuItem("Open");
         fileMenu.add(openMenuItem);
+        
+        JMenu optionsMenu = new JMenu("Options");
+        menuBar.add(optionsMenu);
+        assignmentOneMenuItem = new JMenuItem("Use assignment1 capabilities");
+        assignmentTwoMenuItem = new JMenuItem("Use assignment2 capabilities");
+        optionsMenu.add(assignmentOneMenuItem);
+        optionsMenu.add(assignmentTwoMenuItem);
+        
         setJMenuBar(menuBar);
 
 
@@ -171,7 +179,14 @@ public class MapFrame extends JFrame {
     public JMenuItem getOpenMenu() {
     	return this.openMenuItem;
     }
-    public JList getRoadListPanel() {
+    public JMenuItem getAssignmentOneMenuItem() {
+		return assignmentOneMenuItem;
+	}
+
+	public JMenuItem getAssignmentTwoMenuItem() {
+		return assignmentTwoMenuItem;
+	}
+	public JList getRoadListPanel() {
     	return this.roadListPanel;
     }
 
@@ -187,6 +202,8 @@ public class MapFrame extends JFrame {
     private AutoSuggestionTextField<String> searchTextField;
     private JMenuBar menuBar;
     private JMenuItem openMenuItem;
+    private JMenuItem assignmentOneMenuItem;
+    private JMenuItem assignmentTwoMenuItem;
     private JList roadListPanel;
     private DefaultListModel roadList;
     // End of variables declaration

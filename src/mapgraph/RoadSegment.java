@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.Path2D;
 import java.util.*;
+
+import assignment2.PathFindable;
 import main.*;
 
 public class RoadSegment implements MapDrawable {
@@ -27,8 +29,6 @@ public class RoadSegment implements MapDrawable {
 		this.nodeFrom = g.getNodeByID(nodeFrom);
 		int nodeTo = Integer.parseInt(line[3]);
 		this.nodeTo = g.getNodeByID(nodeTo);
-		this.nodeFrom.addEdgeOut(this);
-		this.nodeTo.addEdgeIn(this);
 		for(int i = 4; i < line.length; i += 2) {
 			Double lat = Double.parseDouble(line[i]);
 			Double lon = Double.parseDouble(line[i+1]);
@@ -84,6 +84,10 @@ public class RoadSegment implements MapDrawable {
 	public IntersectionNode getNodeTo() {
 		return nodeTo;
 	}
+	
+	public IntersectionNode getOtherNode(PathFindable node) {
+		return nodeFrom == node ? nodeTo : nodeFrom;
+	}
 
 	public void setNodeTo(IntersectionNode nodeTo) {
 		this.nodeTo = nodeTo;
@@ -114,6 +118,24 @@ public class RoadSegment implements MapDrawable {
 	
 	public Road getParentRoad() {
 		return this.belongsToRoad;
+	}
+
+	public void setOneWay(Integer oneway) {
+		/*if(this.belongsToRoad.getName().equals("ngapawa st")) {
+			System.out.printf("%s added edge in: %s\n", this.nodeTo, this);
+			System.out.printf("%s added edge out: %s\n", this.nodeFrom, this);
+		}*/
+		this.nodeFrom.addEdgeOut(this, nodeTo);
+		this.nodeTo.addEdgeIn(this, nodeFrom);
+		if(oneway == 0) {
+			/*if(this.belongsToRoad.getName().equals("ngapawa st")) {
+				System.out.printf("%s added edge in: %s\n", this.nodeFrom, this);
+				System.out.printf("%s added edge out: %s\n", this.nodeTo, this);
+			}*/
+			this.nodeFrom.addEdgeIn(this, nodeTo);
+			this.nodeTo.addEdgeOut(this, nodeFrom);
+		}
+		
 	}
 
 

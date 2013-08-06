@@ -3,6 +3,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
 import javax.swing.*;
+
+import assignment2.PathFinder;
 import main.autosuggester.AutoSuggestionTextField;
 import main.autosuggester.SuggestionListener;
 import mapgraph.*;
@@ -10,12 +12,16 @@ import indexstructures.roadtrie.*;
 
 
 public class AucklandMap {
+	
+	public static int ASSIGNMENT = 2;
+	
 	private MapFrame mapFrame;
 	private JPanel drawingPanel;
 	private JTextArea textOutput;
 	private AutoSuggestionTextField<String> searchField;
 	private JButton searchButton;
-	private JMenuItem openMenuItem;
+	private JMenuItem openMenuItem, assig1menu, assig2menu;
+	private PathFinder selectedPath = null;
 
 	private int mouseX;
 	private int mouseY;
@@ -51,6 +57,8 @@ public class AucklandMap {
 		searchField = mapFrame.getSearchTextField();
 		searchButton = mapFrame.getSearchButton();
 		openMenuItem = mapFrame.getOpenMenu();
+		assig1menu = mapFrame.getAssignmentOneMenuItem();
+		assig2menu = mapFrame.getAssignmentTwoMenuItem();
 
 
 		final ActionListener searchButtonListener = new ActionListener() {
@@ -80,7 +88,7 @@ public class AucklandMap {
 	            	Point2D p2 = (Point2D)p;
 	            	Point2D loc2 = (Point2D) locPoint;
 	            	double dist = p2.distance(loc2);
-	            	System.out.printf("p2 %s, loc2 %s, dist %f\n", p2,loc2,dist);
+	            	//TODO debug System.out.printf("p2 %s, loc2 %s, dist %f\n", p2,loc2,dist);
 	            	if(p2.distance(loc2) < 7) closeEnough = true;
             	
             	/* DEBUG System.out.printf("Clicked at point %s\n" +
@@ -89,19 +97,41 @@ public class AucklandMap {
             			" = Nodes: %s\n\n", p, loc, closest == null ? "null" : closest.toString(), all);*/
 	            	
             	}
-            	
-            	
+            	 	
             	if(closest != null && closeEnough) {
-            		IntersectionNode.setSelectedNode(closest);
-                	drawingPanel.repaint();
-                	textOutput.setText("");
-                	StringBuilder allRoads = new StringBuilder("");
-	            	for(String s : closest.getAllRoads()) {
-	            		allRoads.append(s+", ");
-	            	}
-	            	String out = String.format("Intersection information:\n" +
-	            			"ID: %d,\nRoads connected by it:\n%s", closest.getID(), allRoads);
-	            	textOutput.append(out);
+
+            		if(AucklandMap.ASSIGNMENT == 1) {
+	            		IntersectionNode.setSelectedNode(closest);
+	                	drawingPanel.repaint();
+	                	textOutput.setText("");
+	                	StringBuilder allRoads = new StringBuilder("");
+		            	for(String s : closest.getAllRoads()) {
+		            		allRoads.append(s+", ");
+		            	}
+		            	String out = String.format("Intersection information:\n" +
+		            			"ID: %d,\nRoads connected by it:\n%s", closest.getID(), allRoads);
+		            	textOutput.append(out);
+            		} else {
+            			if(evt.getButton() == MouseEvent.BUTTON1) {
+            				if(closest != IntersectionNode.getEndNode() && closest != IntersectionNode.getStartNode()) {
+            					IntersectionNode.setStartNode(closest);
+            					
+            				}
+            			} else if(evt.getButton() == MouseEvent.BUTTON3) {
+            				if(closest != IntersectionNode.getEndNode() && closest != IntersectionNode.getStartNode()) {
+            					IntersectionNode.setEndNode(closest);
+            				}
+            			}
+            			if(IntersectionNode.getStartNode() != null && IntersectionNode.getEndNode() != null) {
+            				PathFinder pf = new PathFinder(IntersectionNode.getStartNode(), IntersectionNode.getEndNode());
+            				pf.buildPath(mapGraph);
+            				mapGraph.setPath(pf);
+            				textOutput.setText(pf.getDirections());
+            			} else {
+            				mapGraph.setPath(null);
+            			}
+            			drawingPanel.repaint();
+            		}
             	}
             }
         });
@@ -197,7 +227,29 @@ public class AucklandMap {
 			}
 			
 		});
-
+		
+		ActionListener assig1MenuListener = new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				textOutput.setText("");
+				textOutput.append("Assignment 1 Mode ON!\nYou are now able to click on intersections individually.");
+				AucklandMap.ASSIGNMENT = 1;
+				mapGraph.setPath(null);
+				IntersectionNode.setStartNode(null);
+				IntersectionNode.setEndNode(null);
+			}
+		};
+		assig1menu.addActionListener(assig1MenuListener);
+		ActionListener assig2MenuListener = new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				textOutput.setText("");
+				textOutput.append("Assignment 2 Mode ON!\nYou are now able to click on pairs of intersections with left mouse, and right mouse to find the shortest path");
+				AucklandMap.ASSIGNMENT = 2;
+				mapGraph.setPath(null);
+				IntersectionNode.setStartNode(null);
+				IntersectionNode.setEndNode(null);
+			}
+		};
+		assig2menu.addActionListener(assig2MenuListener);
 
 		ActionListener openMenuListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

@@ -8,6 +8,8 @@ import java.util.*;
 
 import javax.swing.JFrame;
 
+import assignment2.PathFinder;
+
 import main.*;
 import main.autosuggester.*;
 import indexstructures.quadtree.MapBoundingBox;
@@ -23,6 +25,8 @@ public class Graph {
 	private AucklandMap owner;
 	public QuadTree intersectionQuad;
 	private double maxX, maxY, minX, minY;
+	
+	private PathFinder path;
 
 	private double zoom = 1.0;
 	private double panX = 0;
@@ -64,7 +68,7 @@ public class Graph {
 		g.drawString(String.format("Scale: %f panX: %f panY:%f", scale,panX,panY), (int) (dimensions.getWidth()-300), 50);
 		g.setColor(Color.BLACK);*/
 
-		if(intersectionQuad != null) intersectionQuad.draw(g2d, origin, scale);
+		//if(intersectionQuad != null) intersectionQuad.draw(g2d, origin, scale);
 
 		for(IntersectionNode n : nodes.values()) {
 			n.draw(g2d, origin, scale);
@@ -76,6 +80,15 @@ public class Graph {
 		if(RoadGroup.getSelected() != null)
 			RoadGroup.getSelected().draw(g2d, origin, scale);
 
+		if(path != null) {
+			Stroke str = g2d.getStroke();
+			Color col = g2d.getColor();
+			g2d.setStroke(new BasicStroke(3.0f));
+			g2d.setColor(Color.CYAN);
+			path.draw(g2d, origin, scale);
+			g2d.setStroke(str);
+			g2d.setColor(col);
+		}
 
 
 
@@ -198,6 +211,7 @@ public class Graph {
 					Road roadOfSegment = roads.get(seg.getRoadID());
 					roadOfSegment.addSegment(seg);
 					seg.setParentRoad(roadOfSegment);
+					seg.setOneWay(roadOfSegment.getOneway());
 				}catch(NumberFormatException e) {
 
 				}
@@ -209,6 +223,7 @@ public class Graph {
 		}
 		return true;
 	}
+
 
 
 
@@ -251,5 +266,13 @@ public class Graph {
 	
 	public void setOwner(AucklandMap map) {
 		this.owner = map;
+	}
+	
+	public Map<Integer, IntersectionNode> getNodes() {
+		return nodes;
+	}
+	
+	public void setPath(PathFinder pf) {
+		this.path = pf;
 	}
 }
