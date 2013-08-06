@@ -70,7 +70,6 @@ public class PathFinder implements MapDrawable {
 			double costToHere = currentTuple.costToHere, totalCostToGoal = currentTuple.totalCostToGoal;
 			
 			if(!node.isVisited()) {
-				System.out.println(1);
 				node.setVisited(true);
 				node.setPathFrom(from);
 				node.setPathCost(costToHere);

@@ -13,6 +13,8 @@ import indexstructures.roadtrie.*;
 
 public class AucklandMap {
 	
+	public static boolean SHOWASTARVISITED = false;
+
 	public static int ASSIGNMENT = 2;
 	
 	private MapFrame mapFrame;
@@ -20,7 +22,7 @@ public class AucklandMap {
 	private JTextArea textOutput;
 	private AutoSuggestionTextField<String> searchField;
 	private JButton searchButton;
-	private JMenuItem openMenuItem, assig1menu, assig2menu;
+	private JMenuItem openMenuItem, assig1menu, assig2menu, astarmenu;
 	private PathFinder selectedPath = null;
 
 	private int mouseX;
@@ -59,6 +61,7 @@ public class AucklandMap {
 		openMenuItem = mapFrame.getOpenMenu();
 		assig1menu = mapFrame.getAssignmentOneMenuItem();
 		assig2menu = mapFrame.getAssignmentTwoMenuItem();
+		astarmenu = mapFrame.getAstarMenu();
 
 
 		final ActionListener searchButtonListener = new ActionListener() {
@@ -81,6 +84,7 @@ public class AucklandMap {
             	ViewingDimensions vd = mapGraph.getViewingDimensions();
             	Point p = new Point(evt.getX(),evt.getY());
             	Location loc = Location.newFromPoint(p, vd.getOrigin(), vd.getScale());
+            	if(mapGraph.intersectionQuad == null) return;
             	IntersectionNode closest = mapGraph.intersectionQuad.find(loc);
             	boolean closeEnough = false;
             	if(closest != null) {
@@ -250,6 +254,18 @@ public class AucklandMap {
 			}
 		};
 		assig2menu.addActionListener(assig2MenuListener);
+		
+		astarmenu.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SHOWASTARVISITED = !SHOWASTARVISITED;
+				if(SHOWASTARVISITED) astarmenu.setText("Turn ASTAR debugging OFF");
+				else astarmenu.setText("Turn ASTAR debugging ON");
+				drawingPanel.repaint();
+			}
+			
+		});
 
 		ActionListener openMenuListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

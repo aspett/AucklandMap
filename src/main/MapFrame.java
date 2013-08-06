@@ -150,8 +150,10 @@ public class MapFrame extends JFrame {
         menuBar.add(optionsMenu);
         assignmentOneMenuItem = new JMenuItem("Use assignment1 capabilities");
         assignmentTwoMenuItem = new JMenuItem("Use assignment2 capabilities");
+        debugAstarMenu = new JMenuItem("Turn ASTAR debugging ON");
         optionsMenu.add(assignmentOneMenuItem);
         optionsMenu.add(assignmentTwoMenuItem);
+        optionsMenu.add(debugAstarMenu);
         
         setJMenuBar(menuBar);
 
@@ -186,6 +188,9 @@ public class MapFrame extends JFrame {
 	public JMenuItem getAssignmentTwoMenuItem() {
 		return assignmentTwoMenuItem;
 	}
+	public JMenuItem getAstarMenu() {
+		return debugAstarMenu;
+	}
 	public JList getRoadListPanel() {
     	return this.roadListPanel;
     }
@@ -204,6 +209,7 @@ public class MapFrame extends JFrame {
     private JMenuItem openMenuItem;
     private JMenuItem assignmentOneMenuItem;
     private JMenuItem assignmentTwoMenuItem;
+    private JMenuItem debugAstarMenu;
     private JList roadListPanel;
     private DefaultListModel roadList;
     // End of variables declaration

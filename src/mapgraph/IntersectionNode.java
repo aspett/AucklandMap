@@ -6,6 +6,7 @@ import java.util.*;
 
 import assignment2.PathFindable;
 
+import main.AucklandMap;
 import main.Location;
 
 /**
@@ -48,6 +49,8 @@ public class IntersectionNode implements MapDrawable, PathFindable {
 		}
 		else {
 			g.setColor(Color.BLUE);
+			if(this.visited && AucklandMap.SHOWASTARVISITED)
+				g.setColor(Color.ORANGE);
 			g.fillOval(d.x-2, d.y-2, 4, 4);
 		}
 		g.setColor(Color.BLACK);
