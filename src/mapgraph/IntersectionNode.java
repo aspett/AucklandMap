@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.util.*;
 
 import assignment2.astar.PathFindable;
+import assignment2.unionfind.UnionFindable;
 
 import main.AucklandMap;
 import main.Location;
@@ -14,7 +15,7 @@ import main.Location;
  * @author Andrew
  *
  */
-public class IntersectionNode implements MapDrawable, PathFindable {
+public class IntersectionNode implements MapDrawable, PathFindable, UnionFindable {
 	private Map<PathFindable, RoadSegment> edgesOut;
 	private Map<PathFindable, RoadSegment> edgesIn;
 	private Location location;
@@ -24,12 +25,15 @@ public class IntersectionNode implements MapDrawable, PathFindable {
 	private boolean visited;
 	private PathFindable from;
 	private double pathCost;
+	private UnionFindable krParent;
+	private int krRank;
 	
 	public IntersectionNode(String[] line) throws NumberFormatException {
 		edgesOut = new HashMap<PathFindable, RoadSegment>();
 		edgesIn = new HashMap<PathFindable, RoadSegment>();
 		id = Integer.parseInt(line[0]);
 		location = Location.newFromLatLon(Double.parseDouble(line[1]), Double.parseDouble(line[2]));
+		resetUnionFind();
 	}
 
 	public void drawhigh(Graphics2D g, Location origin, double scale) {
@@ -162,5 +166,38 @@ public class IntersectionNode implements MapDrawable, PathFindable {
 	@Override
 	public void setPathCost(double cost) {
 		this.pathCost = cost;		
+	}
+
+	@Override
+	public UnionFindable getKruskParent() {
+		return this.krParent;
+	}
+
+	@Override
+	public void setKruskParent(UnionFindable parent) {
+		this.krParent = parent;
+		
+	}
+
+	@Override
+	public int getKruskRank() {
+		return this.krRank;
+	}
+
+	@Override
+	public void setKruskRank(int rank) {
+		this.krRank = rank;
+	}
+
+	@Override
+	public void resetUnionFind() {
+		this.krParent = this;
+		this.krRank = 0;
+	}
+
+	@Override
+	public UnionFindable findKruskParent() {
+		if(this.getKruskParent() == this) return this;
+		else return this.getKruskParent().findKruskParent();
 	}
 }

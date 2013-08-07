@@ -8,7 +8,8 @@ import java.util.*;
 
 import javax.swing.JFrame;
 
-import assignment2.astar.PathFinder;
+import assignment2.astar.*;
+import assignment2.unionfind.ComponentFinder;
 
 import main.*;
 import main.autosuggester.*;
@@ -23,6 +24,7 @@ public class Graph {
 	private Map<String, RoadGroup> roadGroups;
 	private MapFrame frame;
 	private AucklandMap owner;
+	private ComponentFinder components;
 	public QuadTree intersectionQuad;
 	private double maxX, maxY, minX, minY;
 	
@@ -46,6 +48,7 @@ public class Graph {
 		edges = new HashSet<RoadSegment>();
 		roads = new HashMap<Integer, Road>();
 		roadGroups = new HashMap<String, RoadGroup>();
+		components = new ComponentFinder();
 
 		maxX = 0;
 		maxY = 0;
@@ -71,7 +74,11 @@ public class Graph {
 		//if(intersectionQuad != null) intersectionQuad.draw(g2d, origin, scale);
 
 		for(IntersectionNode n : nodes.values()) {
-			n.draw(g2d, origin, scale);
+			//TODO debug remove
+			/*if(components.isRootNode(n)) {
+				n.drawhigh(g2d,origin,scale);
+			}
+			else*/ n.draw(g2d, origin, scale);
 		}
 		for(RoadSegment s : edges) {
 			if(s.getParentRoad().drawableRoad())
@@ -100,10 +107,11 @@ public class Graph {
 		if(cont && !this.loadRoads(directory)) cont = false;
 		if(cont && !this.loadIntersections(directory)) cont = false;
 		if(cont && !this.loadSegments(directory)) cont = false;
-
 		if(cont) {
 			this.buildRanges();
 			this.buildQuadTree();
+			//TODO debug remove
+			//outputMessage(String.format("#Components: %d\n", components.numberComponents()));
 		}
 	}
 
@@ -182,6 +190,7 @@ public class Graph {
 				try {
 					IntersectionNode node = new IntersectionNode(lineArray);
 					nodes.put(node.getID(), node);
+					components.add(node);
 
 				}catch(NumberFormatException e) {
 
@@ -212,6 +221,7 @@ public class Graph {
 					roadOfSegment.addSegment(seg);
 					seg.setParentRoad(roadOfSegment);
 					seg.setOneWay(roadOfSegment.getOneway());
+					components.union(seg.getNodeFrom(), seg.getNodeTo());
 				}catch(NumberFormatException e) {
 
 				}
