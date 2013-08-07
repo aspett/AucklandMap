@@ -8,7 +8,7 @@ import java.util.*;
 
 import javax.swing.JFrame;
 
-import assignment2.PathFinder;
+import assignment2.astar.PathFinder;
 
 import main.*;
 import main.autosuggester.*;

@@ -1,4 +1,4 @@
-package assignment2;
+package assignment2.astar;
 
 import main.Location;
 import mapgraph.*;

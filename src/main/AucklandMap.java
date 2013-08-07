@@ -4,7 +4,7 @@ import java.awt.event.*;
 import java.awt.geom.Point2D;
 import javax.swing.*;
 
-import assignment2.PathFinder;
+import assignment2.astar.PathFinder;
 import main.autosuggester.AutoSuggestionTextField;
 import main.autosuggester.SuggestionListener;
 import mapgraph.*;

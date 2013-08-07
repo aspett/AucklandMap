@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.*;
 
-import assignment2.PathFindable;
+import assignment2.astar.PathFindable;
 
 import main.AucklandMap;
 import main.Location;

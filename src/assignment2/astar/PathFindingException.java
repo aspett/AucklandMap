@@ -1,4 +1,4 @@
-package assignment2;
+package assignment2.astar;
 
 public class PathFindingException extends RuntimeException {
 	

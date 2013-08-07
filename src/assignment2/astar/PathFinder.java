@@ -1,4 +1,4 @@
-package assignment2;
+package assignment2.astar;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -74,7 +74,7 @@ public class PathFinder implements MapDrawable {
 				node.setPathFrom(from);
 				node.setPathCost(costToHere);
 				
-				if(node == this.goal) {System.out.println("END"); return node; }
+				if(node == this.goal) { return node; } //System.out.println("END");
 				
 				for(Map.Entry<PathFindable, RoadSegment> e : node.getEdgesOut().entrySet()) {
 					PathFindable neighbour = e.getKey();

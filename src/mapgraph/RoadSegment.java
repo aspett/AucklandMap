@@ -6,7 +6,7 @@ import java.awt.Stroke;
 import java.awt.geom.Path2D;
 import java.util.*;
 
-import assignment2.PathFindable;
+import assignment2.astar.PathFindable;
 import main.*;
 
 public class RoadSegment implements MapDrawable {
