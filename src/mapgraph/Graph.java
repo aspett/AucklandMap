@@ -8,8 +8,11 @@ import java.util.*;
 
 import javax.swing.JFrame;
 
+import assignment2.articulation.ArticulationFindable;
+import assignment2.articulation.ArticulationPointFinder;
 import assignment2.astar.*;
 import assignment2.unionfind.ComponentFinder;
+import assignment2.unionfind.UnionFindable;
 
 import main.*;
 import main.autosuggester.*;
@@ -25,6 +28,7 @@ public class Graph {
 	private MapFrame frame;
 	private AucklandMap owner;
 	private ComponentFinder components;
+	private ArticulationPointFinder articulationFinder;
 	public QuadTree intersectionQuad;
 	private double maxX, maxY, minX, minY;
 	
@@ -78,7 +82,8 @@ public class Graph {
 			/*if(components.isRootNode(n)) {
 				n.drawhigh(g2d,origin,scale);
 			}
-			else*/ n.draw(g2d, origin, scale);
+			else*/ 
+			n.draw(g2d, origin, scale);
 		}
 		for(RoadSegment s : edges) {
 			if(s.getParentRoad().drawableRoad())
@@ -95,7 +100,14 @@ public class Graph {
 			path.draw(g2d, origin, scale);
 			g2d.setStroke(str);
 			g2d.setColor(col);
+			
 		}
+		if(IntersectionNode.getStartNode() != null)
+			IntersectionNode.getStartNode().draw(g2d, origin, scale);
+		if(IntersectionNode.getEndNode() != null)
+			IntersectionNode.getEndNode().draw(g2d, origin, scale);
+		
+		
 
 
 
@@ -110,6 +122,20 @@ public class Graph {
 		if(cont) {
 			this.buildRanges();
 			this.buildQuadTree();
+			//Run articulation point finder
+			
+			Set<ArticulationFindable> artRoots = new HashSet<ArticulationFindable>();
+			for(UnionFindable n : components.rootNodes()) {
+				artRoots.add(((ArticulationFindable)((IntersectionNode)n)));
+			}
+			articulationFinder = new ArticulationPointFinder(artRoots);
+			articulationFinder.run(new HashSet<ArticulationFindable>(nodes.values()));
+			outputMessage(String.format("#ArtPoints: %d\n", articulationFinder.numArtNodes()));
+			
+			
+			
+			
+			
 			//TODO debug remove
 			//outputMessage(String.format("#Components: %d\n", components.numberComponents()));
 		}
@@ -285,4 +311,27 @@ public class Graph {
 	public void setPath(PathFinder pf) {
 		this.path = pf;
 	}
+	
+	public void resetPath() {
+		for(IntersectionNode n : nodes.values()) {
+			PathFindable k = n;
+			k.setVisited(false);
+		}
+		this.path = null;
+	}
+	
+	/*public void runArticulationPointFinder() {
+		if(articulationFinder != null) {
+			//For each root node, run the articulation point finder.
+			Set<ArticulationFindable> articulationNodes = new HashSet<ArticulationFindable>();
+			for(UnionFindable rootNode : components.rootNodes()) {
+				ArticulationFindable node = (ArticulationFindable) rootNode;
+				Set<ArticulationFindable> allNodes = new HashSet<ArticulationFindable>(nodes.values());
+				/*for(IntersectionNode n : nodes.values()) {
+					allNodes.add((ArticulationFindable)n);
+				}
+				articulationNodes.addAll(articulationFinder.findArticulationPoints(node, allNodes));
+			}
+		}
+	}*/
 }

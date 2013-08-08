@@ -43,4 +43,8 @@ public class ComponentFinder {
 	public boolean isRootNode(UnionFindable node) {
 		return nodes.contains(node);
 	}
+	
+	public Set<UnionFindable> rootNodes() {
+		return nodes;
+	}
 }

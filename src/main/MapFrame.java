@@ -151,8 +151,12 @@ public class MapFrame extends JFrame {
         assignmentOneMenuItem = new JMenuItem("Use assignment1 capabilities");
         assignmentTwoMenuItem = new JMenuItem("Use assignment2 capabilities");
         debugAstarMenu = new JMenuItem("Turn ASTAR debugging ON");
+        runArticulationMenu = new JMenuItem("Show articulation points");
+        clearAstarMenu = new JMenuItem("Clear ASTAR path");
         optionsMenu.add(assignmentOneMenuItem);
         optionsMenu.add(assignmentTwoMenuItem);
+        optionsMenu.add(runArticulationMenu);
+        optionsMenu.add(clearAstarMenu);
         optionsMenu.add(debugAstarMenu);
         
         setJMenuBar(menuBar);
@@ -191,9 +195,16 @@ public class MapFrame extends JFrame {
 	public JMenuItem getAstarMenu() {
 		return debugAstarMenu;
 	}
+	public JMenuItem getArticulationMenu() {
+		return runArticulationMenu;
+	}
+	public JMenuItem getClearAstarMenu() {
+		return clearAstarMenu;
+	}
 	public JList getRoadListPanel() {
     	return this.roadListPanel;
     }
+	
 
     // Variables declaration - do not modify
     private JPanel drawingPanel;
@@ -210,6 +221,8 @@ public class MapFrame extends JFrame {
     private JMenuItem assignmentOneMenuItem;
     private JMenuItem assignmentTwoMenuItem;
     private JMenuItem debugAstarMenu;
+    private JMenuItem runArticulationMenu;
+    private JMenuItem clearAstarMenu;
     private JList roadListPanel;
     private DefaultListModel roadList;
     // End of variables declaration

@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.*;
 
+import assignment2.articulation.ArticulationFindable;
 import assignment2.astar.PathFindable;
 import assignment2.unionfind.UnionFindable;
 
@@ -15,7 +16,7 @@ import main.Location;
  * @author Andrew
  *
  */
-public class IntersectionNode implements MapDrawable, PathFindable, UnionFindable {
+public class IntersectionNode implements MapDrawable, PathFindable, UnionFindable, ArticulationFindable {
 	private Map<PathFindable, RoadSegment> edgesOut;
 	private Map<PathFindable, RoadSegment> edgesIn;
 	private Location location;
@@ -27,6 +28,9 @@ public class IntersectionNode implements MapDrawable, PathFindable, UnionFindabl
 	private double pathCost;
 	private UnionFindable krParent;
 	private int krRank;
+	private Set<ArticulationFindable> neighbours;
+	private int articulationDepth;
+	private boolean isArticulationPoint;
 	
 	public IntersectionNode(String[] line) throws NumberFormatException {
 		edgesOut = new HashMap<PathFindable, RoadSegment>();
@@ -44,7 +48,11 @@ public class IntersectionNode implements MapDrawable, PathFindable, UnionFindabl
 	}
 	public void draw(Graphics2D g, Location origin, double scale) {
 		Point d = location.getPoint(origin, scale);
-		if(this == selectedNode || this == selectedNode2) {
+		if(AucklandMap.SHOWARTICULATION && this.isArticulationPoint) {
+			g.setColor(Color.RED);
+			g.fillOval(d.x-3, d.y-3, 6, 6);
+		}
+		else if(this == selectedNode || this == selectedNode2) {
 			if(this == selectedNode)
 				g.setColor(Color.GREEN);
 			else
@@ -54,7 +62,7 @@ public class IntersectionNode implements MapDrawable, PathFindable, UnionFindabl
 		else {
 			g.setColor(Color.BLUE);
 			if(this.visited && AucklandMap.SHOWASTARVISITED)
-				g.setColor(Color.ORANGE);
+				g.setColor(Color.MAGENTA);
 			g.fillOval(d.x-2, d.y-2, 4, 4);
 		}
 		g.setColor(Color.BLACK);
@@ -200,4 +208,42 @@ public class IntersectionNode implements MapDrawable, PathFindable, UnionFindabl
 		if(this.getKruskParent() == this) return this;
 		else return this.getKruskParent().findKruskParent();
 	}
+
+
+	@Override
+	public Set<ArticulationFindable> getArticulationNeighbours() {
+		return this.neighbours;
+	}
+
+	@Override
+	public void initArticulationNeighbours() {
+		Set<ArticulationFindable> neighbours = new HashSet<ArticulationFindable>();
+		for(PathFindable n : edgesIn.keySet()) {
+			ArticulationFindable node = ((IntersectionNode)n);
+			neighbours.add(node);
+		}
+		for(PathFindable n : edgesOut.keySet()) {
+			ArticulationFindable node = ((IntersectionNode)n);
+			neighbours.add(node);
+		}
+		this.neighbours = neighbours;
+		
+	}
+
+	@Override
+	public void setDepth(int depth) {
+		this.articulationDepth = depth;
+		
+	}
+
+	@Override
+	public int getDepth() {
+		return this.articulationDepth;
+	}
+
+	@Override
+	public void setArticulationPoint(boolean b) {
+		this.isArticulationPoint = b;		
+	}
+	
 }

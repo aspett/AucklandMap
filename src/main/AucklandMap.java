@@ -14,6 +14,7 @@ import indexstructures.roadtrie.*;
 public class AucklandMap {
 	
 	public static boolean SHOWASTARVISITED = false;
+	public static boolean SHOWARTICULATION = false;
 
 	public static int ASSIGNMENT = 2;
 	
@@ -22,7 +23,7 @@ public class AucklandMap {
 	private JTextArea textOutput;
 	private AutoSuggestionTextField<String> searchField;
 	private JButton searchButton;
-	private JMenuItem openMenuItem, assig1menu, assig2menu, astarmenu;
+	private JMenuItem openMenuItem, assig1menu, assig2menu, astarmenu, runartmenu, clearastarmenu;
 	private PathFinder selectedPath = null;
 
 	private int mouseX;
@@ -62,6 +63,8 @@ public class AucklandMap {
 		assig1menu = mapFrame.getAssignmentOneMenuItem();
 		assig2menu = mapFrame.getAssignmentTwoMenuItem();
 		astarmenu = mapFrame.getAstarMenu();
+		runartmenu = mapFrame.getArticulationMenu();
+		clearastarmenu = mapFrame.getClearAstarMenu();
 
 
 		final ActionListener searchButtonListener = new ActionListener() {
@@ -256,7 +259,6 @@ public class AucklandMap {
 		assig2menu.addActionListener(assig2MenuListener);
 		
 		astarmenu.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SHOWASTARVISITED = !SHOWASTARVISITED;
@@ -265,6 +267,29 @@ public class AucklandMap {
 				drawingPanel.repaint();
 			}
 			
+		});
+		
+		clearastarmenu.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				mapGraph.resetPath();
+				IntersectionNode.setStartNode(null);
+				IntersectionNode.setEndNode(null);
+				textOutput.setText("");
+				drawingPanel.repaint();
+			}
+			
+		});
+		
+		runartmenu.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				SHOWARTICULATION = !SHOWARTICULATION;
+				if(SHOWARTICULATION) runartmenu.setText("Hide articulation points");
+				else runartmenu.setText("Show articulation points");
+				drawingPanel.repaint();
+			}
 		});
 
 		ActionListener openMenuListener = new ActionListener() {
