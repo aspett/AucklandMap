@@ -57,19 +57,21 @@ public class RoadSegment implements MapDrawable, Comparable<RoadSegment> {
 		}
 		Stroke str = g2d.getStroke();
 		Color col = g2d.getColor();
-		if(g.isEdgeSelected(this)) {			
-			g2d.setStroke(new BasicStroke(3.0f));
-			g2d.setColor(Color.CYAN);
-		}
-		else {
-			int roadClass = getParentRoad().getRoadclass();
-			g2d.setStroke(new BasicStroke((float) (roadClass/1.5)));
-			
-			if(roadClass == 0) g2d.setColor(new Color(70,70,70));
-			else if(roadClass == 1) g2d.setColor(new Color(166,102,130));
-			else if(roadClass == 2) g2d.setColor(new Color(176,94,0));
-			else if(roadClass == 3) g2d.setColor(new Color(122,0,0));
-			else g2d.setColor(new Color(227,125,9));
+		if(col.equals(Color.BLACK)) {
+			if(g.isEdgeSelected(this)) {			
+				g2d.setStroke(new BasicStroke(3.0f));
+				g2d.setColor(Color.CYAN);
+			}
+			else {
+				int roadClass = getParentRoad().getRoadclass();
+				g2d.setStroke(new BasicStroke((float) (roadClass/1.5)));
+				
+				if(roadClass == 0) g2d.setColor(new Color(70,70,70));
+				else if(roadClass == 1) g2d.setColor(new Color(166,102,130));
+				else if(roadClass == 2) g2d.setColor(new Color(176,94,0));
+				else if(roadClass == 3) g2d.setColor(new Color(122,0,0));
+				else g2d.setColor(new Color(227,125,9));
+			}
 		}
 		g2d.draw(path);
 		g2d.setStroke(str);

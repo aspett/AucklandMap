@@ -160,7 +160,8 @@ public class PathFinder implements MapDrawable {
 	}
 	
 	public String getDirections() {
-		if(directions.size() == 0) return "No route found";
+		Stack<RoadSegment> dirs = (Stack<RoadSegment>)directions.clone();
+		if(dirs.size() == 0) return "No route found";
 		StringBuilder out = new StringBuilder("");
 		double dist = 0;
 		double time = 0;
@@ -168,8 +169,8 @@ public class PathFinder implements MapDrawable {
 		double lastLen = 0;
 		double lastTime = 0;
 		boolean reset = false;
-		while(directions.size() > 0) {
-			RoadSegment seg = directions.pop();
+		while(dirs.size() > 0) {
+			RoadSegment seg = dirs.pop();
 			String name = String.format("%s %s", seg.getParentRoad().getName(), seg.getParentRoad().getCity());
 			if(lastName.equals("")) {
 				lastName = name;
