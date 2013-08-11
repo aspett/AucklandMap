@@ -362,10 +362,10 @@ public class AucklandMap {
 	public void drawMap(Graphics g) {
 		mapGraph.draw(g, new Dimension(drawingPanel.getWidth(), drawingPanel.getHeight()));
 
-		//DEBUG
+		/*//DEBUG
 		ViewingDimensions vd = mapGraph.getViewingDimensions();
 		g.drawString(String.format("%s [%f]", Location.newFromPoint(new Point(mouseX2,mouseY2), vd.getOrigin(), vd.getScale()), vd.getScale()),
-				(int) (new Dimension(drawingPanel.getWidth(), drawingPanel.getHeight()).getWidth()-300), 100);
+				(int) (new Dimension(drawingPanel.getWidth(), drawingPanel.getHeight()).getWidth()-300), 100);*/
 	}
 
 	public void panelClick(MouseEvent e) {

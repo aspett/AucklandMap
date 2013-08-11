@@ -122,7 +122,7 @@ public class Road implements MapDrawable {
 		case 4: { return 80; }
 		case 5: { return 90; }
 		case 6: { return 110;}
-		default: { return 0; }
+		default: { return 40; }
 		}
 	}
 
@@ -133,7 +133,7 @@ public class Road implements MapDrawable {
 		case 2: return 0.93f;
 		case 3: return 0.97f;
 		case 4: return 1.0f;
-		default: return 0.8f;
+		default: return 0.87f;
 		}
 	}
 	
