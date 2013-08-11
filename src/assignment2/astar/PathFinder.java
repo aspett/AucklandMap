@@ -167,32 +167,33 @@ public class PathFinder implements MapDrawable {
 		double time = 0;
 		String lastName = "";
 		double lastLen = 0;
-		double lastTime = 0;
 		boolean reset = false;
 		while(dirs.size() > 0) {
 			RoadSegment seg = dirs.pop();
+			Road r = seg.getParentRoad();
 			String name = String.format("%s %s", seg.getParentRoad().getName(), seg.getParentRoad().getCity());
 			if(lastName.equals("")) {
 				lastName = name;
 				lastLen = seg.getLength();
-				lastTime = seg.getLength() / seg.getParentRoad().getSpeed();
+				//lastTime = seg.getLength() / seg.getParentRoad().getSpeed();
 			}
 			else if(lastName.equals(name)) {
 				lastLen += seg.getLength();
-				lastTime += seg.getLength() / seg.getParentRoad().getSpeed();
+				//lastTime += seg.getLength() / seg.getParentRoad().getSpeed();
 			}
 			else {
 				out.append(String.format("%s: \t%4.2fkm\n", lastName, lastLen));
 				dist += lastLen;
-				time += seg.getLength() / seg.getParentRoad().getRealSpeed();
+				//time += seg.getLength() / seg.getParentRoad().getRealSpeed();
 				lastName = name;
 				lastLen = seg.getLength();
-				lastTime = seg.getLength() / seg.getParentRoad().getSpeed();
+				//lastTime = seg.getLength() / seg.getParentRoad().getSpeed();
 			}
+			time += (seg.getLength() / r.getRealSpeed());
 		}
 		out.append(String.format("%s: \t%4.2fkm\n", lastName, lastLen));
 		dist += lastLen;
-		time += lastTime;
+		//time += lastTime;
 		out.append(String.format("Total length: %4.2fkm\n", dist));
 		out.append(String.format("Total time: %4.2f hours\n", time));
 		out.append(String.format("Using %s based path finding.\n", AucklandMap.ASTARTIMEBASED?"time":"distance"));
