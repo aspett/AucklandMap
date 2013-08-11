@@ -6,8 +6,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 
-import mapgraph.*;
-
 public class ArticulationPointFinder {
 	Set<ArticulationFindable> rootNodes;
 	Set<ArticulationFindable> allArtNodes;

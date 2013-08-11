@@ -130,14 +130,8 @@ public class Graph {
 			}
 			articulationFinder = new ArticulationPointFinder(artRoots);
 			articulationFinder.run(new HashSet<ArticulationFindable>(nodes.values()));
-			outputMessage(String.format("#ArtPoints: %d\n", articulationFinder.numArtNodes()));
-			
-			
-			
-			
-			
-			//TODO debug remove
-			//outputMessage(String.format("#Components: %d\n", components.numberComponents()));
+			outputMessage(String.format("#Articulation Points: %d\n", articulationFinder.numArtNodes()));
+			outputMessage(String.format("#Components: %d\n", components.numberComponents()));
 		}
 	}
 
@@ -319,19 +313,4 @@ public class Graph {
 		}
 		this.path = null;
 	}
-	
-	/*public void runArticulationPointFinder() {
-		if(articulationFinder != null) {
-			//For each root node, run the articulation point finder.
-			Set<ArticulationFindable> articulationNodes = new HashSet<ArticulationFindable>();
-			for(UnionFindable rootNode : components.rootNodes()) {
-				ArticulationFindable node = (ArticulationFindable) rootNode;
-				Set<ArticulationFindable> allNodes = new HashSet<ArticulationFindable>(nodes.values());
-				/*for(IntersectionNode n : nodes.values()) {
-					allNodes.add((ArticulationFindable)n);
-				}
-				articulationNodes.addAll(articulationFinder.findArticulationPoints(node, allNodes));
-			}
-		}
-	}*/
 }

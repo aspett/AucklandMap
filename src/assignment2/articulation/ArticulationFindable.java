@@ -1,6 +1,5 @@
 package assignment2.articulation;
 
-import java.util.Queue;
 import java.util.Set;
 
 public interface ArticulationFindable {

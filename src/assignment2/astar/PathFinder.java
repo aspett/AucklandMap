@@ -8,6 +8,8 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.Stack;
 
+import assignment2.unionfind.UnionFindable;
+
 import mapgraph.*;
 import main.*;
 
@@ -58,11 +60,12 @@ public class PathFinder implements MapDrawable {
 		//directions = String.format("%s\nLength: %f\n", directions, len);
 	}
 	private PathFindable getPath(Graph g) {
+		if(start == null || goal == null) throw new RuntimeException("No start/end");//return null;//"No path available; either start or end node not set.";
 		for(PathFindable node : g.getNodes().values()) {
 			node.setVisited(false);
 			node.setPathCost(0);
+			node.setPathFrom(null);
 		}
-		if(start == null || goal == null) throw new RuntimeException("No start/end");//return null;//"No path available; either start or end node not set.";
 		fringe.add(new AStarTuple(start, null, 0, estimate(start, goal)));
 		while(fringe.size() > 0) {
 			AStarTuple currentTuple = fringe.poll();
