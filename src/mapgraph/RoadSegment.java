@@ -9,7 +9,7 @@ import java.util.*;
 import assignment2.astar.PathFindable;
 import main.*;
 
-public class RoadSegment implements MapDrawable {
+public class RoadSegment implements MapDrawable, Comparable<RoadSegment> {
 	private static final Color SELECTEDCOLOR = Color.red;
 	private Integer roadID;
 	private double length;
@@ -18,10 +18,12 @@ public class RoadSegment implements MapDrawable {
 	private IntersectionNode nodeTo;
 	private List<Location> coords;
 	private boolean selected;
+	private Graph g;
 
 	public RoadSegment(String[] line, Graph g) throws NumberFormatException{
 		coords = new ArrayList<Location>();
 		selected = false;
+		this.g = g;
 
 		roadID = Integer.parseInt(line[0]);
 		length = Double.parseDouble(line[1]);
@@ -36,7 +38,7 @@ public class RoadSegment implements MapDrawable {
 		}
 	}
 
-	public void draw(Graphics2D g2d, Location origin, double scale) {
+	public void draw(Graphics2D g2d, Location origin, double scale, double zoom) {
 		Path2D path = new Path2D.Double();
 		//System.out.printf("%d / %d\n", i++, edges.size());
 		boolean first = true;
@@ -53,17 +55,25 @@ public class RoadSegment implements MapDrawable {
 				path.lineTo(x, y);
 			}
 		}
-		/*Stroke str = g2d.getStroke();
-		if(this.selected){
-			g2d.setColor(SELECTEDCOLOR);
-			g2d.setStroke(new BasicStroke(3));
-		}*/
-
+		Stroke str = g2d.getStroke();
+		Color col = g2d.getColor();
+		if(g.isEdgeSelected(this)) {			
+			g2d.setStroke(new BasicStroke(3.0f));
+			g2d.setColor(Color.CYAN);
+		}
+		else {
+			int roadClass = getParentRoad().getRoadclass();
+			g2d.setStroke(new BasicStroke((float) (roadClass/1.5)));
+			
+			if(roadClass == 0) g2d.setColor(new Color(70,70,70));
+			else if(roadClass == 1) g2d.setColor(new Color(166,102,130));
+			else if(roadClass == 2) g2d.setColor(new Color(176,94,0));
+			else if(roadClass == 3) g2d.setColor(new Color(122,0,0));
+			else g2d.setColor(new Color(227,125,9));
+		}
 		g2d.draw(path);
-		/*if(this.selected) { 
-			g2d.setStroke(str);
-			g2d.setColor(Color.BLACK);
-		}*/
+		g2d.setStroke(str);
+		g2d.setColor(col);
 	}
 
 	@Override
@@ -136,6 +146,16 @@ public class RoadSegment implements MapDrawable {
 			this.nodeTo.addEdgeOut(this, nodeFrom);
 		}
 		
+	}
+
+	@Override
+	public int compareTo(RoadSegment o) {
+		Road thisr = this.getParentRoad(), or = o.getParentRoad();
+		if(thisr == null) return 1;
+		if(or == null) return -1;
+		if(thisr.getRoadclass() > or.getRoadclass()) return -1;
+		else if(thisr.getRoadclass() < or.getRoadclass()) return 1;
+		else return 0;
 	}
 
 

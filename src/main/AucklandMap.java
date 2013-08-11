@@ -12,9 +12,11 @@ import indexstructures.roadtrie.*;
 
 
 public class AucklandMap {
-	
+	public static boolean ASTARTIMEBASED = false;
+	public static boolean USEALLROADS = false;
 	public static boolean SHOWASTARVISITED = false;
 	public static boolean SHOWARTICULATION = false;
+	public static boolean BLACKBACKGROUND = false;
 
 	public static int ASSIGNMENT = 2;
 	
@@ -23,7 +25,7 @@ public class AucklandMap {
 	private JTextArea textOutput;
 	private AutoSuggestionTextField<String> searchField;
 	private JButton searchButton;
-	private JMenuItem openMenuItem, assig1menu, assig2menu, astarmenu, runartmenu, clearastarmenu;
+	private JMenuItem openMenuItem, assig1menu, assig2menu, astarmenu, runartmenu, clearastarmenu, astardisttimemenu, bgmenu;
 	private PathFinder selectedPath = null;
 
 	private int mouseX;
@@ -65,6 +67,8 @@ public class AucklandMap {
 		astarmenu = mapFrame.getAstarMenu();
 		runartmenu = mapFrame.getArticulationMenu();
 		clearastarmenu = mapFrame.getClearAstarMenu();
+		astardisttimemenu = mapFrame.getAstarDistTimeMenu();
+		bgmenu = mapFrame.getBackgroundMenu();
 
 
 		final ActionListener searchButtonListener = new ActionListener() {
@@ -118,7 +122,7 @@ public class AucklandMap {
 		            	String out = String.format("Intersection information:\n" +
 		            			"ID: %d,\nRoads connected by it:\n%s", closest.getID(), allRoads);
 		            	textOutput.append(out);
-            		} else {
+            		} else { //assignment 2
             			if(evt.getButton() == MouseEvent.BUTTON1) {
             				if(closest != IntersectionNode.getEndNode() && closest != IntersectionNode.getStartNode()) {
             					IntersectionNode.setStartNode(closest);
@@ -269,6 +273,23 @@ public class AucklandMap {
 			
 		});
 		
+		bgmenu.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				BLACKBACKGROUND = !BLACKBACKGROUND;
+				if(BLACKBACKGROUND) {
+					bgmenu.setText("Make background WHITE");
+					drawingPanel.setBackground(new Color(0,0,0));
+				}
+				else {
+					bgmenu.setText("Make background BLACK");
+					drawingPanel.setBackground(new Color(230,230,230));
+				}
+			}
+			
+		});
+		
 		clearastarmenu.addActionListener(new ActionListener() {
 
 			@Override
@@ -278,6 +299,27 @@ public class AucklandMap {
 				IntersectionNode.setEndNode(null);
 				textOutput.setText("");
 				drawingPanel.repaint();
+			}
+			
+		});
+		
+		astardisttimemenu.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ASTARTIMEBASED = !ASTARTIMEBASED;
+				if(IntersectionNode.getStartNode() != null && IntersectionNode.getEndNode() != null) {
+    				PathFinder pf = new PathFinder(IntersectionNode.getStartNode(), IntersectionNode.getEndNode());
+    				pf.buildPath(mapGraph);
+    				mapGraph.setPath(pf);
+    				textOutput.setText(pf.getDirections());
+    			} else {
+    				mapGraph.setPath(null);
+    			}
+				if(ASTARTIMEBASED)
+					astardisttimemenu.setText("Use distance-based heuristic");
+				else astardisttimemenu.setText("Use time-based heuristic");
+				
 			}
 			
 		});
@@ -320,10 +362,10 @@ public class AucklandMap {
 	public void drawMap(Graphics g) {
 		mapGraph.draw(g, new Dimension(drawingPanel.getWidth(), drawingPanel.getHeight()));
 
-		/*//DEBUG
+		//DEBUG
 		ViewingDimensions vd = mapGraph.getViewingDimensions();
-		g.drawString(String.format("%s", Location.newFromPoint(new Point(mouseX2,mouseY2), vd.getOrigin(), vd.getScale())),
-				(int) (new Dimension(drawingPanel.getWidth(), drawingPanel.getHeight()).getWidth()-300), 100);*/
+		g.drawString(String.format("%s [%f]", Location.newFromPoint(new Point(mouseX2,mouseY2), vd.getOrigin(), vd.getScale()), vd.getScale()),
+				(int) (new Dimension(drawingPanel.getWidth(), drawingPanel.getHeight()).getWidth()-300), 100);
 	}
 
 	public void panelClick(MouseEvent e) {

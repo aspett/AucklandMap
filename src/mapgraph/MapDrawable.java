@@ -5,5 +5,5 @@ import main.*;
 
 
 public interface MapDrawable {
-	public void draw(Graphics2D g, Location origin, double scale);
+	public void draw(Graphics2D g, Location origin, double scale, double zoom);
 }

@@ -34,7 +34,7 @@ public class RoadGroup implements MapDrawable{
 	
 	
 	@Override
-	public void draw(Graphics2D g, Location origin, double scale) {
+	public void draw(Graphics2D g, Location origin, double scale, double zoom) {
 		//TODO debug System.out.printf("Draw %s %s\n", this.name, this.city);
 		if(selected == this) {
 			Stroke str = g.getStroke();
@@ -42,7 +42,7 @@ public class RoadGroup implements MapDrawable{
 			g.setColor(Color.RED);
 			g.setStroke(new BasicStroke(3.0f));
 			for(Road r : roads) {
-				r.draw(g, origin, scale);
+				r.draw(g, origin, scale, 1.0);
 			}
 			g.setColor(c);
 			g.setStroke(str);

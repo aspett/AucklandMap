@@ -153,11 +153,15 @@ public class MapFrame extends JFrame {
         debugAstarMenu = new JMenuItem("Turn ASTAR debugging ON");
         runArticulationMenu = new JMenuItem("Show articulation points");
         clearAstarMenu = new JMenuItem("Clear ASTAR path");
+        astarDistTimeMenu = new JMenuItem("Use time-based heuristic");
+        backgroundMenu = new JMenuItem("Make background BLACK");
         optionsMenu.add(assignmentOneMenuItem);
         optionsMenu.add(assignmentTwoMenuItem);
         optionsMenu.add(runArticulationMenu);
+        optionsMenu.add(astarDistTimeMenu);
         optionsMenu.add(clearAstarMenu);
         optionsMenu.add(debugAstarMenu);
+        optionsMenu.add(backgroundMenu);
         
         setJMenuBar(menuBar);
 
@@ -201,6 +205,12 @@ public class MapFrame extends JFrame {
 	public JMenuItem getClearAstarMenu() {
 		return clearAstarMenu;
 	}
+	public JMenuItem getAstarDistTimeMenu() {
+		return astarDistTimeMenu;
+	}
+	public JMenuItem getBackgroundMenu() {
+		return backgroundMenu;
+	}
 	public JList getRoadListPanel() {
     	return this.roadListPanel;
     }
@@ -223,6 +233,8 @@ public class MapFrame extends JFrame {
     private JMenuItem debugAstarMenu;
     private JMenuItem runArticulationMenu;
     private JMenuItem clearAstarMenu;
+    private JMenuItem astarDistTimeMenu;
+    private JMenuItem backgroundMenu;
     private JList roadListPanel;
     private DefaultListModel roadList;
     // End of variables declaration

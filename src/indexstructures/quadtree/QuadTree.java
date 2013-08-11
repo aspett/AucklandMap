@@ -111,7 +111,7 @@ public class QuadTree implements MapDrawable{
 	}
 
 	@Override
-	public void draw(Graphics2D g, Location origin, double scale) {
+	public void draw(Graphics2D g, Location origin, double scale, double zoom) {
 		g.setColor(Color.GRAY);
 		Location topLeft = new Location(bounds.x, bounds.y);
 		Location bottomRight = new Location(topLeft.x + bounds.width, topLeft.y + bounds.height);
@@ -120,10 +120,10 @@ public class QuadTree implements MapDrawable{
 		g.drawRect(tl.x, tl.y, br.x-tl.x, br.y-tl.y);
 		g.setColor(Color.BLACK);
 		if(northWest != null) {
-			northWest.draw(g, origin, scale);
-			northEast.draw(g, origin, scale);
-			southWest.draw(g, origin, scale);
-			southEast.draw(g, origin, scale);
+			northWest.draw(g, origin, scale, zoom);
+			northEast.draw(g, origin, scale, zoom);
+			southWest.draw(g, origin, scale, zoom);
+			southEast.draw(g, origin, scale, zoom);
 		}
 	}
 

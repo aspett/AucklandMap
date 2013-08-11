@@ -102,14 +102,42 @@ public class Road implements MapDrawable {
 	}
 
 	@Override
-	public void draw(Graphics2D g, Location origin, double scale) {
+	public void draw(Graphics2D g, Location origin, double scale, double zoom) {
 		for(RoadSegment s : getSegments()) {
-			s.draw(g,origin,scale);
+			s.draw(g,origin,scale, 1.0);
 		}
 	}
 	
 	public boolean drawableRoad() {
 		if((this.type > 0 && this.type < 13) || this.type == 22 || this.type == 26) return true;
 		return false;
+	}
+	
+	public int getRealSpeed() {
+		switch(getSpeed()) {
+		case 0: { return 5;  }
+		case 1: { return 20; }
+		case 2: { return 40; }
+		case 3: { return 60; }
+		case 4: { return 80; }
+		case 5: { return 90; }
+		case 6: { return 110;}
+		default: { return 0; }
+		}
+	}
+
+	public float getRoadclassModifier() {
+		switch(getRoadclass()) {
+		case 0: return 0.87f;
+		case 1: return 0.90f;
+		case 2: return 0.93f;
+		case 3: return 0.97f;
+		case 4: return 1.0f;
+		default: return 0.8f;
+		}
+	}
+	
+	public float roadSpeedWithClass() {
+		return getRealSpeed() * getRoadclassModifier();
 	}
 }

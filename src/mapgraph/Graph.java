@@ -49,7 +49,7 @@ public class Graph {
 
 	public Graph() {
 		nodes = new HashMap<Integer, IntersectionNode>();
-		edges = new HashSet<RoadSegment>();
+		edges = new TreeSet<RoadSegment>();
 		roads = new HashMap<Integer, Road>();
 		roadGroups = new HashMap<String, RoadGroup>();
 		components = new ComponentFinder();
@@ -76,36 +76,30 @@ public class Graph {
 		g.setColor(Color.BLACK);*/
 
 		//if(intersectionQuad != null) intersectionQuad.draw(g2d, origin, scale);
-
 		for(IntersectionNode n : nodes.values()) {
 			//TODO debug remove
 			/*if(components.isRootNode(n)) {
 				n.drawhigh(g2d,origin,scale);
 			}
 			else*/ 
-			n.draw(g2d, origin, scale);
+			n.draw(g2d, origin, scale, 1.0);
 		}
 		for(RoadSegment s : edges) {
 			if(s.getParentRoad().drawableRoad())
-				s.draw(g2d, origin, scale);
+				s.draw(g2d, origin, scale, 1.0);
 		}
+		
+		
 		if(RoadGroup.getSelected() != null)
-			RoadGroup.getSelected().draw(g2d, origin, scale);
+			RoadGroup.getSelected().draw(g2d, origin, scale, 1.0);
 
 		if(path != null) {
-			Stroke str = g2d.getStroke();
-			Color col = g2d.getColor();
-			g2d.setStroke(new BasicStroke(3.0f));
-			g2d.setColor(Color.CYAN);
-			path.draw(g2d, origin, scale);
-			g2d.setStroke(str);
-			g2d.setColor(col);
-			
+			path.draw(g2d, origin, scale, 1.0);
 		}
 		if(IntersectionNode.getStartNode() != null)
-			IntersectionNode.getStartNode().draw(g2d, origin, scale);
+			IntersectionNode.getStartNode().draw(g2d, origin, scale, 1.0);
 		if(IntersectionNode.getEndNode() != null)
-			IntersectionNode.getEndNode().draw(g2d, origin, scale);
+			IntersectionNode.getEndNode().draw(g2d, origin, scale, 1.0);
 		
 		
 
@@ -312,5 +306,10 @@ public class Graph {
 			k.setVisited(false);
 		}
 		this.path = null;
+	}
+	
+	public boolean isEdgeSelected(RoadSegment s) {
+		if(this.path != null) return this.path.isEdgeSelected(s);
+		else return false;
 	}
 }

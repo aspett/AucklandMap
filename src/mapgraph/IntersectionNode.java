@@ -43,28 +43,53 @@ public class IntersectionNode implements MapDrawable, PathFindable, UnionFindabl
 	public void drawhigh(Graphics2D g, Location origin, double scale) {
 		IntersectionNode sel = selectedNode;
 		selectedNode = this;
-		draw(g,origin,scale);
+		draw(g,origin,scale, 1.0);
 		selectedNode=sel;
 	}
-	public void draw(Graphics2D g, Location origin, double scale) {
+	public void draw(Graphics2D g, Location origin, double scale, double zoom) {
 		Point d = location.getPoint(origin, scale);
+		int x,y,w,h;
+		Color c;
 		if(AucklandMap.SHOWARTICULATION && this.isArticulationPoint) {
-			g.setColor(Color.RED);
-			g.fillOval(d.x-3, d.y-3, 6, 6);
+			c = Color.RED;
+			x=2;
+			y=2;
+			w=3;
+			h=3;
 		}
 		else if(this == selectedNode || this == selectedNode2) {
 			if(this == selectedNode)
-				g.setColor(Color.GREEN);
+				c = Color.green;
 			else
-				g.setColor(Color.RED);
-			g.fillOval(d.x-4, d.y-4, 8, 8);
+				c = Color.red;
+			x=4;
+			y=4;
+			w=8;
+			h=8;
 		}
 		else {
-			g.setColor(Color.BLUE);
+			c = Color.BLUE;
 			if(this.visited && AucklandMap.SHOWASTARVISITED)
-				g.setColor(Color.MAGENTA);
-			g.fillOval(d.x-2, d.y-2, 4, 4);
+				c = Color.MAGENTA;
+			x=1;
+			y=1;
+			w=2;
+			h=2;
 		}
+		if(scale > 35) {
+			x*=2;
+			y*=2;
+			w*=2;
+			h*=2;
+		}
+		if(scale > 170) {
+			x*=2;
+			y*=2;
+			w*=2;
+			h*=2;
+		}
+		g.setColor(c);
+		g.fillOval(d.x-x, d.y-y, w, h);
 		g.setColor(Color.BLACK);
 
 	}
